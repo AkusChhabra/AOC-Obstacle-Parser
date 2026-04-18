@@ -1,3 +1,6 @@
+![Static Badge](https://img.shields.io/badge/python-v3.13-blue)
+Flask 3.1.3
+
 # AOC-Obstacle-Parser
 
 GUI developed to streamline obstacle data collection from Aerodrome Obstacle Charts
