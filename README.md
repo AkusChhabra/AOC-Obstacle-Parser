@@ -6,4 +6,4 @@ GUI developed to streamline obstacle data collection from Aerodrome Obstacle Cha
 
 The image below provides a rendition of the application's user interface, showcasing its design and layout.
 
-![Application Prototype](./documents/AOC_Obstacle_Parser_Requirements.png)
+![Application Prototype](https://github.com/AkusChhabra/AOC-Obstacle-Parser/blob/main/documents/AOC%20Obstacle%20Parser%20Requirements.png)
