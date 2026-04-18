@@ -1,5 +1,5 @@
 ![Static Badge](https://img.shields.io/badge/python-v3.13-blue)
-Flask 3.1.3
+![Static Badge](https://img.shields.io/badge/Flask-v3.1.3-red)
 
 # AOC-Obstacle-Parser
 
