@@ -136,10 +136,10 @@
 
     <!-- Upload -->
     <div class="s-section">
-      <div class="s-title">Chart</div>
+      <div class="s-title"></div>
       <div id="upload-zone"
         onclick="document.getElementById('file-input').click()"
-        ondragover="e=>{e.preventDefault();this.classList.add('drag')}"
+        ondragover="e=>{ e.preventDefault(); this.classList.add('drag')}"
         ondragleave="this.classList.remove('drag')"
         ondrop="onDrop(event)">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -195,23 +195,10 @@
         </button>
       </div>
     </div>
-
-    <!-- Live stats -->
-    <div class="s-section">
-      <div class="s-title">Live measurement</div>
-      <div class="stat-row">
-        <div class="stat-card"><div class="label">Longitudinal</div><div class="val" id="s-long">—</div></div>
-        <div class="stat-card"><div class="label" id="s-lat-lbl">Lateral</div><div class="val" id="s-lat">—</div></div>
-      </div>
-      <div class="stat-row" style="margin-top:6px">
-        <div class="stat-card"><div class="label">Straight-line</div><div class="val" id="s-dist">—</div></div>
-        <div class="stat-card"><div class="label">Obstacles</div><div class="val" id="s-count">0</div></div>
-      </div>
-    </div>
-
+    
     <!-- Display toggles -->
     <div class="s-section">
-      <div class="s-title">Display</div>
+      <div class="s-title">Display Options</div>
       <div class="toggle-row">
         <span>Dimension lines</span>
         <label class="toggle"><input type="checkbox" id="tog-dims" checked onchange="draw()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
@@ -440,7 +427,7 @@ function handleClick(pt) {
     if (!runwayEnd) { setHint('Set the runway end first'); return; }
     obsCount++;
     obstacles.push({ id: obsCount, uid: 'u'+Date.now(), x: pt.x, y: pt.y, elev: '' });
-    document.getElementById('s-count').textContent = obstacles.length;
+    //document.getElementById('s-count').textContent = obstacles.length;
     document.getElementById('btn-export').disabled = false;
     updateTable();
     setHint(`Obstacle ${obsCount} placed — continue clicking or export when done`);
@@ -510,7 +497,7 @@ function draw() {
   const showIds    = document.getElementById('tog-ids').checked;
 
   // Calibration points & line
-  if (calibPts.length > 0) {
+  if (calibPts.length > 0 && calibPts.length <= 2) {
     calibPts.forEach((p, i) => {
       drawMarker(p.x, p.y, C.amber, i === 0 ? 'A' : 'B', 6);
     });
@@ -611,11 +598,11 @@ function updateTable() {
       <td>${m.long}${typeof m.long==='number'?' m':''}</td>
       <td>${m.lat}${typeof m.lat==='number'?' m':''}</td>
       <td>${m.dist}${typeof m.dist==='number'?' m':''}</td>
-      <td><input type="text" value="${o.elev}" placeholder="e.g. 453m" oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
+      <td><input type="text" value="${o.elev}" placeholder=" " oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
       <td><button class="icon-btn" onclick="deleteObs('${o.uid}')" style="font-size:12px" aria-label="Delete">×</button></td>`;
     tbody.appendChild(tr);
   });
-  document.getElementById('s-count').textContent = obstacles.length;
+  //document.getElementById('s-count').textContent = obstacles.length;
 }
 
 function deleteObs(uid) {
@@ -627,13 +614,15 @@ function undoLast() {
   if (mode === 'calibrate' && calibPts.length > 0) {
     calibPts.pop(); draw(); return;
   }
-  if (obstacles.length > 0) { obstacles.pop(); updateTable(); draw(); }
+  // Added obsCount-- to ensure IDs remain sequential after undoing, but this means IDs can be reused if you undo and add again. 
+  // A more robust solution would be to generate unique IDs that aren't tied to count, but for simplicity we'll keep it as is.
+  if (obstacles.length > 0) { obsCount--; obstacles.pop(); updateTable(); draw(); }
   else if (runwayEnd) { runwayEnd = null; draw(); }
 }
 
 // ── Export ────────────────────────────────────────────────────
 function exportCSV() {
-  let csv = 'obstacle_id,longitudinal_m,lateral_m,straight_line_m,elevation_label\n';
+  let csv = 'obstacle_id,DER_m,lateral_m,straight_line_m,elevation_label\n';
   obstacles.forEach(o => {
     const m = calibMpp && runwayEnd ? measure(o) : { long:'', lat:'', dist:'' };
     csv += `${o.id},${m.long},${m.lat},${m.dist},"${o.elev}"\n`;
@@ -647,12 +636,12 @@ function exportCSV() {
 function resetAll() {
   if (!confirm('Reset all measurements? The chart image will be kept.')) return;
   calibPts = []; calibMpp = null; runwayEnd = null;
-  obstacles = []; obsCount = 0;
+  obstacles = []; obsCount = 0; // Implement reset image functionality
   document.getElementById('calib-result').style.display = 'none';
   document.getElementById('scale-badge').style.display = 'none';
   document.getElementById('coord-bar').style.display = 'none';
   ['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
-  document.getElementById('s-count').textContent = '0';
+  //document.getElementById('s-count').textContent = '0';
   updateTable();
   if (img) { setMode('calibrate'); draw(); }
   else setHint('Upload a chart to begin');
