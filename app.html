@@ -44,12 +44,13 @@
   .s-title { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
 
   /* Upload zone */
-  #upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  /*#upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.15s; }
   #upload-zone:hover, #upload-zone.drag { border-color: var(--blue); background: var(--blue-bg); }
   #upload-zone svg { display: block; margin: 0 auto 8px; color: var(--hint); }
   #upload-zone p { font-size: 12px; color: var(--muted); }
   #upload-zone .sub { font-size: 11px; color: var(--hint); margin-top: 2px; }
   #file-input { display: none; }
+*/
 
   /* Calibration */
   .calib-step { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; }
@@ -106,6 +107,17 @@
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .flex-container1 {
+  display: flex; /* Aligns items side by side */
+  gap: 20px;     /* Adds space between the two divs */
+  }
+
+  .box1 {
+    flex: 1;       /* Forces both divs to take up equal width */
+    padding: 15px;
+    background-color: #f0f0f0;
+  }
 </style>
 </head>
 <body>
@@ -119,9 +131,9 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       Upload chart
     </button>
-    <input type="file" id="file-input" accept="image/*" onchange="loadChart(event)">
+    <input type="file" id="file-input" accept="image/*" onchange="loadChart(event)" style="display: none;">
     <div class="sep"></div>
-    <button class="btn" id="btn-export" onclick="exportCSV()" disabled>
+    <button class="btn" id="btn-export" onclick="exportCSV()" disabled style="background:#90EE90">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export CSV
     </button>
@@ -135,6 +147,7 @@
   <div id="sidebar">
 
     <!-- Upload -->
+    <!-- 
     <div class="s-section">
       <div class="s-title"></div>
       <div id="upload-zone"
@@ -148,15 +161,18 @@
       </div>
       <div id="chart-info" style="display:none;margin-top:8px;font-size:11px;color:var(--muted);"></div>
     </div>
+    -->
 
     <!-- Calibration -->
     <div class="s-section">
-      <div class="s-title">Scale calibration</div>
+      <div class="flex-container1">
+        <div class="s-title">Scale calibration</div>
+        <div title="Click the start and end of a known distance on the printed scale bar." class="step-num" id="step1-num">i</div>
+      </div>
       <div class="calib-step">
-        <div class="step-num" id="step1-num">1</div>
         <div>
-          <div style="font-size:12px;font-weight:500;margin-bottom:2px">Click two scale bar points</div>
-          <div class="step-text">Click the start and end of a known distance on the printed scale bar.</div>
+          <!--<div style="font-size:12px;font-weight:500;margin-bottom:2px">Click two scale bar points</div> -->
+          <div class="step-text" title="Click the start and end of a known distance on the printed scale bar.">Select calibrate to begin.</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin:6px 0 4px;padding-left:26px;">
@@ -213,14 +229,14 @@
       </div>
     </div>
 
-    <!-- Obstacle log -->
+    <!-- Obstacle Table -->
     <div class="s-section" style="padding-bottom:6px">
-      <div class="s-title">Obstacle log</div>
+      <div class="s-title">Obstacle Data</div>
     </div>
     <div id="obs-table-wrap">
       <table>
         <thead><tr>
-          <th>#</th><th>Long (m)</th><th>Lat (m)</th><th>Dist (m)</th><th>Elev</th><th></th>
+          <th>ID</th><th>DER (m)</th><th>Lat (m)</th><th>Elev</th><th></th>
         </tr></thead>
         <tbody id="obs-tbody"></tbody>
       </table>
@@ -420,7 +436,7 @@ function handleClick(pt) {
     document.getElementById('btn-obs').disabled = false;
     setHint('Runway end set. Switch to "Place obstacle" and click each obstacle.');
     document.getElementById('step1-num').className = 'step-num done';
-    draw(); return;
+    draw(); setMode('obstacle'); return;
   }
 
   if (mode === 'obstacle') {
@@ -456,6 +472,7 @@ function finishCalibration() {
   document.getElementById('btn-rwy').disabled = false;
   setHint('Calibrated. Now click "Set runway end" and click the runway threshold.');
   updateTable();
+  setMode('runway');
 }
 
 function setMode(m) {
@@ -598,7 +615,7 @@ function updateTable() {
       <td>${m.long}${typeof m.long==='number'?' m':''}</td>
       <td>${m.lat}${typeof m.lat==='number'?' m':''}</td>
       <td>${m.dist}${typeof m.dist==='number'?' m':''}</td>
-      <td><input type="text" value="${o.elev}" placeholder=" " oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
+      <td><input type="text" value="${o.elev}" placeholder=" ft or m" oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
       <td><button class="icon-btn" onclick="deleteObs('${o.uid}')" style="font-size:12px" aria-label="Delete">×</button></td>`;
     tbody.appendChild(tr);
   });
@@ -622,10 +639,10 @@ function undoLast() {
 
 // ── Export ────────────────────────────────────────────────────
 function exportCSV() {
-  let csv = 'obstacle_id,DER_m,lateral_m,straight_line_m,elevation_label\n';
+  let csv = 'obstacle_id,DER_m,lateral_m,elevation\n';
   obstacles.forEach(o => {
     const m = calibMpp && runwayEnd ? measure(o) : { long:'', lat:'', dist:'' };
-    csv += `${o.id},${m.long},${m.lat},${m.dist},"${o.elev}"\n`;
+    csv += `${o.id},${m.long},${m.lat},"${o.elev}"\n`;
   });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
@@ -636,7 +653,7 @@ function exportCSV() {
 function resetAll() {
   if (!confirm('Reset all measurements? The chart image will be kept.')) return;
   calibPts = []; calibMpp = null; runwayEnd = null;
-  obstacles = []; obsCount = 0; // Implement reset image functionality
+  obstacles = []; obsCount = 0;
   document.getElementById('calib-result').style.display = 'none';
   document.getElementById('scale-badge').style.display = 'none';
   document.getElementById('coord-bar').style.display = 'none';
