@@ -657,6 +657,9 @@ function resetAll() {
   document.getElementById('calib-result').style.display = 'none';
   document.getElementById('scale-badge').style.display = 'none';
   document.getElementById('coord-bar').style.display = 'none';
+  document.getElementById('obs-tbody').style.display = 'none';
+  document.getElementById('obs-empty').style.display = '';
+
   ['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
   //document.getElementById('s-count').textContent = '0';
   updateTable();
