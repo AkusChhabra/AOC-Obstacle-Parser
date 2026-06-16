@@ -358,6 +358,13 @@ function enableUI() {
   });
 }
 
+function disableUI() {
+  ['btn-calib','btn-rwy','btn-obs','btn-export'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = true;
+  });
+}
+
 // ── View transform ────────────────────────────────────────────
 function fitView() {
   if (!img) return;
@@ -442,12 +449,12 @@ area.addEventListener('mousemove', e => {
   }
 
   // Live measurement preview
-  if (runwayEnd && mode === 'obstacle' && calibMpp) {
+  /*if (runwayEnd && mode === 'obstacle' && calibMpp) {
     const m = measure(hoverPt);
     document.getElementById('s-long').textContent = m.long + ' m';
     document.getElementById('s-lat').textContent  = m.lat  + ' m';
     document.getElementById('s-dist').textContent = m.dist + ' m';
-  }
+  } */
 
   // Live calibration line
   if (mode === 'calibrate' && calibPts.length === 1) draw();
@@ -547,7 +554,7 @@ function checkRunwayDirection(x, y) {
   
   if (direction == "left") {
     x = x * -1;
-    yield = y * -1;
+    y = y * -1;
   }
   return [x, y];
 }
@@ -562,7 +569,7 @@ function measure(pt) {
 
   const [dxPx, dyPx] = checkRunwayDirection(x, y);
 
-  console.log("dxPx, dyPx: ", dxPx, dyPx);
+  //console.log("dxPx, dyPx: ", dxPx, dyPx);
 
   return {
     long: Math.round(dxPx * calibMpp),
@@ -672,11 +679,20 @@ function drawBadge(x, y, text, color) {
 function updateTable() {
   const tbody = document.getElementById('obs-tbody');
   const empty = document.getElementById('obs-empty');
+
+  //console.log("tbody: ", tbody);
+  //console.log("empty: ", empty);
+
   tbody.innerHTML = '';
   empty.style.display = obstacles.length ? 'none' : 'block';
 
   document.getElementById("elev-table-label").innerText = "Elev (" + document.getElementById("elev-label").value + ")";
   //console.log(document.getElementById("elev-table-label").innerText);
+
+  console.log("obstacles: ", obstacles)
+
+  //console.log("calibMpp", calibMpp)
+  //console.log("runwayEnd", runwayEnd)
 
   obstacles.forEach(o => {
     const m = calibMpp && runwayEnd ? measure(o) : { long:'—', lat:'—', dist:'—' };
@@ -690,6 +706,7 @@ function updateTable() {
       <td><button class="icon-btn" title="Delete" onclick="deleteObs('${o.uid}')" style="font-size:12px" aria-label="Delete">×</button></td>`;
     tbody.appendChild(tr);
   });
+  console.log("tbody", tbody)
   //document.getElementById('s-count').textContent = obstacles.length;
 }
 
@@ -729,14 +746,16 @@ function resetAll() {
   document.getElementById('calib-result').style.display = 'none';
   document.getElementById('scale-badge').style.display = 'none';
   document.getElementById('coord-bar').style.display = 'none';
-  document.getElementById('obs-tbody').style.display = 'none';
-  document.getElementById('obs-empty').style.display = '';
+  document.getElementById('obs-tbody').style.display = '';
+  document.getElementById('obs-empty').style.display = 'No obstacles placed yet';
   document.getElementById('to-dir').disabled = false;
   document.getElementById('btn-confirm-dir').disabled = false;
 
-  ['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
+  //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
   //document.getElementById('s-count').textContent = '0';
   updateTable();
+  disableUI();
+  //setMode('runway');
   if (img) { setMode('calibrate'); draw(); }
   else setHint('Upload a chart to begin');
 }
