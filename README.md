@@ -12,6 +12,8 @@ The image below provides a rendition of the application's user interface, showca
 
 ![Application Prototype](https://github.com/AkusChhabra/AOC-Obstacle-Parser/blob/main/documents/AOC%20Obstacle%20Parser%20Requirements.png)
 
-The image below demonstrates the application dashboard showcasing a sample AOC with it's data parsed and ready for export.
+# Application Demo
+
+The image below demonstrates the application dashboard showcasing a sample AOC with its data parsed and ready for export.
 
 ![Tool Demo](https://github.com/AkusChhabra/AOC-Obstacle-Parser/blob/main/documents/Tool_Demo.png)
