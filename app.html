@@ -162,6 +162,27 @@
       <div id="chart-info" style="display:none;margin-top:8px;font-size:11px;color:var(--muted);"></div>
     </div>
     -->
+  <div class="s-section">
+    <div class="s-title">Confirm takeoff direction</div>
+    <div class="flex-container1">
+      <div class="step-text" style="padding-top:6px; padding-bottom:6px">
+        <label for="Takeoff Direction" style="margin-left:10px; ">Takeoff Direction:</label>
+        <select class="step-text" name="to-dir" id="to-dir"
+          style="border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
+          <option value="left">Left</option>
+          <option value="right">Right </option>
+        </select>
+        <button class="btn active" id="btn-confirm-dir" onclick="confirmDirection()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <line x1="5" y1="5" x2="5" y2="19" />
+            <line x1="19" y1="5" x2="19" y2="19" />
+          </svg>
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
 
     <!-- Calibration -->
     <div class="s-section">
@@ -184,7 +205,7 @@
           <option value="nm">NM</option>
         </select>
       </div>
-      <div style="padding-left:26px;">
+      <div style="padding-left:10px;">
         <button class="btn active" id="btn-calib" onclick="setMode('calibrate')" disabled>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><line x1="5" y1="5" x2="5" y2="19"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
           Calibrate
@@ -233,10 +254,20 @@
     <div class="s-section" style="padding-bottom:6px">
       <div class="s-title">Obstacle Data</div>
     </div>
+    <div class="flex-container1">
+      <div class="step-text" style="padding-top:6px; padding-bottom:6px">
+        <label for="Elevation Unit" style="margin-left:10px;">Obstacle Elevation Unit:</label>
+        <select class="step-text" name="elev" id="elev-label" onchange="updateTable()" style="border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
+          <option value="ft">ft</option>
+          <option value="m">m</option>
+        </select>
+      </div>
+    </div>
+
     <div id="obs-table-wrap">
       <table>
         <thead><tr>
-          <th>ID</th><th>DER (m)</th><th>Lat (m)</th><th>Elev</th><th></th>
+          <th>ID</th><th>DER (m)</th><th>Lat (m)</th><th id="elev-table-label">Elev (ft)</th><th></th>
         </tr></thead>
         <tbody id="obs-tbody"></tbody>
       </table>
@@ -356,6 +387,20 @@ function screenToCanvas(sx, sy) {
   return { x: (sx - panX) / zoomLevel, y: (sy - panY) / zoomLevel };
 }
 
+// ── Finalize takeoff direction ─────────────────────────────────
+function confirmDirection() {
+  const select = document.getElementById('to-dir');
+  const dir = select.value;
+  if (dir === 'left') {
+    // Default orientation is left takeoff, so no change needed
+    setHint('Takeoff direction confirmed as LEFT. Proceed to calibration.');
+  } else {
+    setHint('Takeoff direction confirmed as RIGHT. Proceed to calibration.');
+  }
+  document.getElementById('to-dir').disabled = true;
+  document.getElementById('btn-confirm-dir').disabled = true;
+}
+
 // ── Mouse events ──────────────────────────────────────────────
 area.addEventListener('wheel', e => {
   e.preventDefault();
@@ -442,6 +487,10 @@ function handleClick(pt) {
   if (mode === 'obstacle') {
     if (!runwayEnd) { setHint('Set the runway end first'); return; }
     obsCount++;
+    //const { x: x_new, y: y_new } = checkRunwayDirection(pt);
+    //x_new = pt.x
+    //y_new = pt.y
+    //console.log("New obstacle at: ", x_new, y_new);
     obstacles.push({ id: obsCount, uid: 'u'+Date.now(), x: pt.x, y: pt.y, elev: '' });
     //document.getElementById('s-count').textContent = obstacles.length;
     document.getElementById('btn-export').disabled = false;
@@ -491,11 +540,30 @@ function setMode(m) {
   draw();
 }
 
+// ── Verify Lateral and DER ────────────────────────────────────
+function checkRunwayDirection(x, y) {
+  if (!runwayEnd || !calibMpp) return false;
+  direction = document.getElementById('to-dir').value
+  
+  if (direction == "left") {
+    x = x * -1;
+    yield = y * -1;
+  }
+  return [x, y];
+}
+
 // ── Measurement ───────────────────────────────────────────────
 function measure(pt) {
   if (!runwayEnd || !calibMpp) return { long: 0, lat: 0, dist: 0 };
-  const dxPx = Math.abs(pt.x - runwayEnd.x);
-  const dyPx = Math.abs(pt.y - runwayEnd.y);
+
+  //const { x: x_new, y: y_new } = checkRunwayDirection(pt);
+  const x = pt.x - runwayEnd.x;
+  const y = pt.y - runwayEnd.y;
+
+  const [dxPx, dyPx] = checkRunwayDirection(x, y);
+
+  console.log("dxPx, dyPx: ", dxPx, dyPx);
+
   return {
     long: Math.round(dxPx * calibMpp),
     lat:  Math.round(dyPx * calibMpp),
@@ -607,6 +675,9 @@ function updateTable() {
   tbody.innerHTML = '';
   empty.style.display = obstacles.length ? 'none' : 'block';
 
+  document.getElementById("elev-table-label").innerText = "Elev (" + document.getElementById("elev-label").value + ")";
+  //console.log(document.getElementById("elev-table-label").innerText);
+
   obstacles.forEach(o => {
     const m = calibMpp && runwayEnd ? measure(o) : { long:'—', lat:'—', dist:'—' };
     const tr = document.createElement('tr');
@@ -615,7 +686,7 @@ function updateTable() {
       <td>${m.long}${typeof m.long==='number'?' m':''}</td>
       <td>${m.lat}${typeof m.lat==='number'?' m':''}</td>
       <td>${m.dist}${typeof m.dist==='number'?' m':''}</td>
-      <td><input type="text" value="${o.elev}" placeholder=" ft or m" oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
+      <td><input type="text" value="${o.elev}" placeholder="Enter elev" oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
       <td><button class="icon-btn" title="Delete" onclick="deleteObs('${o.uid}')" style="font-size:12px" aria-label="Delete">×</button></td>`;
     tbody.appendChild(tr);
   });
@@ -639,7 +710,8 @@ function undoLast() {
 
 // ── Export ────────────────────────────────────────────────────
 function exportCSV() {
-  let csv = 'obstacle_id,DER_m,lateral_m,elevation\n';
+  elev_unit = document.getElementById('elev-label').value;
+  let csv = 'obstacle_id,DER_m,lateral_m,elevation_' + elev_unit + '\n';
   obstacles.forEach(o => {
     const m = calibMpp && runwayEnd ? measure(o) : { long:'', lat:'', dist:'' };
     csv += `${o.id},${m.long},${m.lat},"${o.elev}"\n`;
@@ -659,6 +731,8 @@ function resetAll() {
   document.getElementById('coord-bar').style.display = 'none';
   document.getElementById('obs-tbody').style.display = 'none';
   document.getElementById('obs-empty').style.display = '';
+  document.getElementById('to-dir').disabled = false;
+  document.getElementById('btn-confirm-dir').disabled = false;
 
   ['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
   //document.getElementById('s-count').textContent = '0';
