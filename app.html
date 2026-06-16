@@ -167,12 +167,12 @@
     <div class="flex-container1">
       <div class="step-text" style="padding-top:6px; padding-bottom:6px">
         <label for="Takeoff Direction" style="margin-left:10px; ">Takeoff Direction:</label>
-        <select class="step-text" name="to-dir" id="to-dir"
+        <select class="step-text" name="to-dir" id="to-dir" disabled
           style="border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
           <option value="left">Left</option>
           <option value="right">Right </option>
         </select>
-        <button class="btn active" id="btn-confirm-dir" onclick="confirmDirection()">
+        <button class="btn active" id="btn-confirm-dir" disabled onclick="confirmDirection()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="5" y1="12" x2="19" y2="12" />
             <line x1="5" y1="5" x2="5" y2="19" />
@@ -193,7 +193,7 @@
       <div class="calib-step">
         <div>
           <!--<div style="font-size:12px;font-weight:500;margin-bottom:2px">Click two scale bar points</div> -->
-          <div class="step-text" title="Click the start and end of a known distance on the printed scale bar.">Select calibrate to begin.</div>
+          <div class="step-text" title="Click the start and end of a known distance on the printed scale bar.">Calibrate to begin.</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin:6px 0 4px;padding-left:26px;">
@@ -338,7 +338,9 @@ function loadImageFile(file) {
       canvas.width  = image.naturalWidth;
       canvas.height = image.naturalHeight;
       fitView();
-      enableUI();
+      //enableUI();
+      document.getElementById('to-dir').disabled = false;
+      document.getElementById('btn-confirm-dir').disabled = false;
       document.getElementById('chart-info').style.display = 'block';
       document.getElementById('chart-info').textContent =
         `${file.name} · ${image.naturalWidth}×${image.naturalHeight}px`;
@@ -352,14 +354,14 @@ function loadImageFile(file) {
 }
 
 function enableUI() {
-  ['btn-calib','btn-rwy','btn-obs','btn-export'].forEach(id => {
+  ['btn-calib','btn-rwy','btn-obs','btn-export', 'to-dir', 'btn-confirm-dir'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.disabled = false;
   });
 }
 
 function disableUI() {
-  ['btn-calib','btn-rwy','btn-obs','btn-export'].forEach(id => {
+  ['btn-calib','btn-rwy','btn-obs','btn-export', 'to-dir', 'btn-confirm-dir'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.disabled = true;
   });
@@ -406,6 +408,8 @@ function confirmDirection() {
   }
   document.getElementById('to-dir').disabled = true;
   document.getElementById('btn-confirm-dir').disabled = true;
+  
+  document.getElementById('btn-calib').disabled = false;
 }
 
 // ── Mouse events ──────────────────────────────────────────────
@@ -517,15 +521,18 @@ function finishCalibration() {
   const px = Math.sqrt(dx*dx + dy*dy);
   calibMpp = distM / px;
 
-  const badge = document.getElementById('scale-badge');
-  badge.style.display = 'block';
-  badge.textContent = `Scale: ${calibMpp.toFixed(4)} m/px`;
+  //const badge = document.getElementById('scale-badge');
+  //badge.style.display = 'block';
+  //badge.textContent = `Scale: ${calibMpp.toFixed(4)} m/px`;
 
-  const res = document.getElementById('calib-result');
-  res.style.display = 'block';
-  res.textContent = `✓ ${dist} ${unit} = ${Math.round(px)} px → ${calibMpp.toFixed(4)} m/px`;
+  //const res = document.getElementById('calib-result');
+  //res.style.display = 'block';
+  //res.textContent = `✓ ${dist} ${unit} = ${Math.round(px)} px → ${calibMpp.toFixed(4)} m/px`;
 
   document.getElementById('btn-rwy').disabled = false;
+  document.getElementById('btn-calib').disabled = true;
+  document.getElementById('calib-unit').disabled = true;
+  document.getElementById('calib-dist').disabled = true;
   setHint('Calibrated. Now click "Set runway end" and click the runway threshold.');
   updateTable();
   setMode('runway');
@@ -754,7 +761,7 @@ function resetAll() {
   //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
   //document.getElementById('s-count').textContent = '0';
   updateTable();
-  disableUI();
+  //disableUI();
   //setMode('runway');
   if (img) { setMode('calibrate'); draw(); }
   else setHint('Upload a chart to begin');
