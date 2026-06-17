@@ -118,6 +118,15 @@
     padding: 15px;
     background-color: #f0f0f0;
   }
+  .flash-bg {
+  cursor: pointer;
+  animation: flashBackground 1s infinite linear;
+  }
+
+  @keyframes flashBackground {
+    0%, 100% { background-color: #f5f4f0; }
+    50% { background-color: #EED202; }
+  }
 </style>
 </head>
 <body>
@@ -127,7 +136,7 @@
   <div id="topbar">
     <h1>AOC Obstacle Measurement Tool</h1>
     <div class="sep"></div>
-    <button class="btn" onclick="document.getElementById('file-input').click()">
+    <button class="btn flash-bg" id="btn-upload" onclick="document.getElementById('file-input').click()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       Upload chart
     </button>
@@ -137,6 +146,10 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export CSV
     </button>
+    <button class="btn" id="downloadBtn" onclick="exportCanvas()" disabled style="background:#90EE90">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Image
+    </button>
     <button class="btn danger" onclick="resetAll()" style="margin-left:auto">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
       Reset
@@ -145,7 +158,6 @@
 
   <!-- Sidebar -->
   <div id="sidebar">
-
     <!-- Upload -->
     <!-- 
     <div class="s-section">
@@ -322,12 +334,13 @@ function loadChart(e) {
   loadImageFile(file);
 }
 
+/*
 function onDrop(e) {
   e.preventDefault();
   document.getElementById('upload-zone').classList.remove('drag');
   const file = e.dataTransfer.files[0];
   if (file && file.type.startsWith('image/')) loadImageFile(file);
-}
+} */
 
 function loadImageFile(file) {
   const reader = new FileReader();
@@ -341,6 +354,8 @@ function loadImageFile(file) {
       //enableUI();
       document.getElementById('to-dir').disabled = false;
       document.getElementById('btn-confirm-dir').disabled = false;
+      document.getElementById('btn-confirm-dir').classList.add('flash-bg');
+
       document.getElementById('chart-info').style.display = 'block';
       document.getElementById('chart-info').textContent =
         `${file.name} · ${image.naturalWidth}×${image.naturalHeight}px`;
@@ -351,7 +366,20 @@ function loadImageFile(file) {
     image.src = ev.target.result;
   };
   reader.readAsDataURL(file);
+  disableUpload();
 }
+
+function disableUpload() {
+  document.getElementById('btn-upload').classList.remove('flash-bg');
+  document.getElementById('btn-upload').disabled = true
+}
+
+/*
+function enableUpload() {
+  document.getElementById('btn-upload').classList.add('flash-bg');
+  document.getElementById('btn-upload').disabled = false
+}
+  */
 
 function enableUI() {
   ['btn-calib','btn-rwy','btn-obs','btn-export', 'to-dir', 'btn-confirm-dir'].forEach(id => {
@@ -408,8 +436,10 @@ function confirmDirection() {
   }
   document.getElementById('to-dir').disabled = true;
   document.getElementById('btn-confirm-dir').disabled = true;
-  
+  document.getElementById('btn-confirm-dir').classList.remove('flash-bg');
+
   document.getElementById('btn-calib').disabled = false;
+  document.getElementById('btn-calib').classList.add('flash-bg');
 }
 
 // ── Mouse events ──────────────────────────────────────────────
@@ -505,6 +535,7 @@ function handleClick(pt) {
     obstacles.push({ id: obsCount, uid: 'u'+Date.now(), x: pt.x, y: pt.y, elev: '' });
     //document.getElementById('s-count').textContent = obstacles.length;
     document.getElementById('btn-export').disabled = false;
+    document.getElementById('downloadBtn').disabled = false;
     updateTable();
     setHint(`Obstacle ${obsCount} placed — continue clicking or export when done`);
     draw();
@@ -535,7 +566,9 @@ function finishCalibration() {
   document.getElementById('calib-dist').disabled = true;
   setHint('Calibrated. Now click "Set runway end" and click the runway threshold.');
   updateTable();
+  document.getElementById('btn-calib').classList.remove('flash-bg');
   setMode('runway');
+  document.getElementById('btn-rwy').classList.add('flash-bg');
 }
 
 function setMode(m) {
@@ -620,6 +653,7 @@ function draw() {
     ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
     ctx.fillStyle = C.blue; ctx.fill();
     drawLabel(x+12, y-10, 'RWY end', C.blue);
+    document.getElementById('btn-rwy').classList.remove('flash-bg');
   }
 
   // Obstacles
@@ -732,7 +766,7 @@ function undoLast() {
   else if (runwayEnd) { runwayEnd = null; draw(); }
 }
 
-// ── Export ────────────────────────────────────────────────────
+// ── Export Data ───────────────────────────────────────────────
 function exportCSV() {
   elev_unit = document.getElementById('elev-label').value;
   let csv = 'obstacle_id,DER_m,lateral_m,elevation_' + elev_unit + '\n';
@@ -745,21 +779,47 @@ function exportCSV() {
   a.download = 'aoc_obstacles.csv'; a.click();
 }
 
+// ── Export Image ──────────────────────────────────────────────
+function exportCanvas() {
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.download = 'aoc_obstacles_overlay.png';
+    link.href = url;
+    link.click();
+    
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+}
+
 // ── Reset ─────────────────────────────────────────────────────
 function resetAll() {
   if (!confirm('Reset all measurements? The chart image will be kept.')) return;
   calibPts = []; calibMpp = null; runwayEnd = null;
   obstacles = []; obsCount = 0;
+
   document.getElementById('calib-result').style.display = 'none';
   document.getElementById('scale-badge').style.display = 'none';
   document.getElementById('coord-bar').style.display = 'none';
   document.getElementById('obs-tbody').style.display = '';
   document.getElementById('obs-empty').style.display = 'No obstacles placed yet';
+
   document.getElementById('to-dir').disabled = false;
   document.getElementById('btn-confirm-dir').disabled = false;
+  document.getElementById('btn-rwy').disabled = true;
+  document.getElementById('btn-obs').disabled = true;
+  document.getElementById('btn-export').disabled = true;
+  document.getElementById('downloadBtn').disabled = true;
+  document.getElementById('calib-dist').disabled = false
+  document.getElementById('calib-unit').disabled = false
+
+  document.getElementById('btn-confirm-dir').classList.add('flash-bg');
+  document.getElementById('btn-upload').disabled = false
 
   //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
   //document.getElementById('s-count').textContent = '0';
+  //enableUpload()
   updateTable();
   //disableUI();
   //setMode('runway');
