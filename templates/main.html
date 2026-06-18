@@ -1241,6 +1241,9 @@
 
     // Init
     window.addEventListener('resize', () => { if (img) fitView(); });
+    window.addEventListener('pagehide', () => {
+        navigator.sendBeacon('/shutdown');
+      });
   </script>
 </body>
 
