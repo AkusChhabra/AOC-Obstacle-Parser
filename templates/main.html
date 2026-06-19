@@ -1244,6 +1244,23 @@
     window.addEventListener('pagehide', () => {
         navigator.sendBeacon('/shutdown');
       });
+
+    /*document.getElementById('file-input').addEventListener('click', function () {
+        fetch('/run-script', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('outputArea').innerText = data.message;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('outputArea').innerText = "An error occurred.";
+          });
+    });*/
   </script>
 </body>
 

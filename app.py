@@ -4,6 +4,9 @@ import signal
 import webbrowser
 from flask import Flask, flash, request, render_template, Flask, jsonify
 from werkzeug.utils import secure_filename, redirect
+import pymupdf
+import tkinter as tk
+from tkinter import filedialog
 
 app = Flask(__name__)
 
@@ -27,10 +30,42 @@ app = Flask(
 def index():
    return render_template('main.html')
 
+#@app.route('/run-script', methods=['POST'])
+#def run_script():
+#    try:
+#        root = tk.Tk()
+#        root.withdraw()
+#
+#        file_path = filedialog.askopenfilename()
+#        checkPath(file_path)
+#
+#       inputFile = pymupdf.open(file_path)
+#
+#       for page in inputFile:
+#           zoom = 5.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
+#           matrix = pymupdf.Matrix(zoom, zoom)
+#           pix = page.get_pixmap(matrix=matrix)
+#           
+#           pix.save(f"page-{page.number}.png")
+#
+#       inputFile.close()
+#       
+#       return jsonify(status="success", message="Script executed successfully"), 200
+#   except Exception as e:
+#       return jsonify(status="error", message=str(e)), 500
+
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
     os.kill(os.getpid(), signal.SIGTERM)
     return jsonify({"success": True, "message": "Server shutting down..."})
+
+
+## Functions
+#def checkPath(file_path):
+#    if file_path:
+#        print(f"Selected file: {file_path}")
+#    else:
+#        print("User cancelled the dialog.")
 
 if __name__ == '__main__':
    webbrowser.open("http://127.0.0.1:5000")
