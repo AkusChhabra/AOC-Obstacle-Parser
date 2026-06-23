@@ -703,11 +703,11 @@
       <div id="hint-bar">Upload a chart to begin</div>
       <div id="scale-badge" style="display:none"></div>
       <div id="coord-bar" style="display:none"></div>
-      <div id="zoom-controls">
-        <button class="icon-btn" onclick="zoom(1.25)" title="Zoom in">+</button>
-        <button class="icon-btn" onclick="zoom(0.8)" title="Zoom out">−</button>
-        <button class="icon-btn" onclick="fitView()" title="Fit to screen" style="font-size:11px">⊡</button>
-      </div>
+    </div>
+    <div id="zoom-controls">
+      <button class="icon-btn" onclick="zoom(1.25)" title="Zoom in">+</button>
+      <button class="icon-btn" onclick="zoom(0.8)" title="Zoom out">−</button>
+      <button class="icon-btn" onclick="fitView()" title="Fit to screen" style="font-size:11px">⊡</button>
     </div>
 
   </div>
@@ -807,6 +807,16 @@
     // ── View transform ────────────────────────────────────────────
     function fitView() {
       if (!img) return;
+      /*if (mode === 'runway') {
+        setHint('Click the end of the runway to continue');
+        undoLast();
+      }
+      if (mode === 'obstacle') {
+        undoLast();
+        if (obstacles.length == 0) {
+          setMode('runway');
+        }
+      }*/
       const W = area.clientWidth, H = area.clientHeight;
       zoomLevel = Math.min(W / img.naturalWidth, H / img.naturalHeight) * 0.95;
       panX = (W - img.naturalWidth * zoomLevel) / 2;
@@ -918,6 +928,11 @@
 
     function handleClick(pt) {
       if (!img) return;
+
+      if (pt.x < 0 || pt.y < 0 || pt.x > img.naturalWidth || pt.y > img.naturalHeight) {
+        setHint('Click is outside the chart area');
+        return;
+      }
 
       if (mode === 'calibrate') {
         calibPts.push(pt);
@@ -1241,26 +1256,6 @@
 
     // Init
     window.addEventListener('resize', () => { if (img) fitView(); });
-    window.addEventListener('pagehide', () => {
-        navigator.sendBeacon('/shutdown');
-      });
-
-    /*document.getElementById('file-input').addEventListener('click', function () {
-        fetch('/run-script', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById('outputArea').innerText = data.message;
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('outputArea').innerText = "An error occurred.";
-          });
-    });*/
   </script>
 </body>
 
