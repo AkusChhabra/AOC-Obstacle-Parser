@@ -54,11 +54,27 @@ def index():
 #   except Exception as e:
 #       return jsonify(status="error", message=str(e)), 500
 
+
+#@app.route('/shutdown', methods=['POST'])
+#def shutdown():
+#    # Retrieve the shutdown function from the Werkzeug server
+#    shutdown_func = request.environ.get('werkzeug.server.shutdown')
+#    if shutdown_func is None:
+#        # Fallback to os.kill if running in production/different WSGI
+#        os.kill(os.getpid(), signal.SIGINT)
+#        return 'Server killed'
+#    
+#    shutdown_func()
+#    return 'Server shutting down...'
+
+#@app.route('/shutdown', methods=['POST'])
+#def shutdown():
+#    os.kill(os.getpid(), signal.SIGTERM)
+#    return jsonify({"success": True, "message": "Server shutting down..."})
+
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
-    os.kill(os.getpid(), signal.SIGTERM)
-    return jsonify({"success": True, "message": "Server shutting down..."})
-
+     os._exit(0)
 
 ## Functions
 #def checkPath(file_path):
