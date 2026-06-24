@@ -30,30 +30,9 @@ app = Flask(
 def index():
    return render_template('main.html')
 
-#@app.route('/run-script', methods=['POST'])
-#def run_script():
-#    try:
-#        root = tk.Tk()
-#        root.withdraw()
-#
-#        file_path = filedialog.askopenfilename()
-#        checkPath(file_path)
-#
-#       inputFile = pymupdf.open(file_path)
-#
-#       for page in inputFile:
-#           zoom = 5.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
-#           matrix = pymupdf.Matrix(zoom, zoom)
-#           pix = page.get_pixmap(matrix=matrix)
-#           
-#           pix.save(f"page-{page.number}.png")
-#
-#       inputFile.close()
-#       
-#       return jsonify(status="success", message="Script executed successfully"), 200
-#   except Exception as e:
-#       return jsonify(status="error", message=str(e)), 500
-
+#@app.route("/main.js")
+#def main_js():
+#    return app.send_static_file('js/main.js')
 
 #@app.route('/shutdown', methods=['POST'])
 #def shutdown():
@@ -67,14 +46,15 @@ def index():
 #    shutdown_func()
 #    return 'Server shutting down...'
 
-#@app.route('/shutdown', methods=['POST'])
-#def shutdown():
-#    os.kill(os.getpid(), signal.SIGTERM)
-#    return jsonify({"success": True, "message": "Server shutting down..."})
-
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
      os._exit(0)
+
+## Cache Control
+#@app.after_request
+#def add_header(response):
+#    response.headers['Cache-Control'] = 'no-store'
+#    return response
 
 ## Functions
 #def checkPath(file_path):
