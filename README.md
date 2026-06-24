@@ -7,13 +7,15 @@
 GUI developed to streamline obstacle data collection from Aerodrome Obstacle Charts. Built using Flask, HTML, and JavaScript, this tool allows users to
 upload AOC png files, extract relevant obstacle data, and export it in a structured format for further analysis.
 
-## How to Run the Application
+## How to Download & Run the Application
 
-The following options are available for running the application:
+The following options are available for downloading the application:
 
 ### 1) Download the latest release
 
 Please download the latest release [here](https://github.com/AkusChhabra/AOC-Obstacle-Parser/releases/latest).
+
+Open the AOC Parser.exe file to run the application. The application will open in your default web browser.
 
 ### 2) Clone the repository and run the application locally
 
@@ -37,6 +39,8 @@ curl -L -O https://github.com/AkusChhabra/AOC-Obstacle-Parser/archive/master.zip
 curl -L -o AOC\ Parser.exe https://github.com/AkusChhabra/AOC-Obstacle-Parser/releases/latest/download/AOC.Parser.exe
 ```
 
+Open the AOC Parser.exe file to run the application. The application will open in your default web browser.
+
 # Application Prototype
 
 The image below provides a rendition of the application's user interface, showcasing its design and layout. This prototype is subject
@@ -50,3 +54,7 @@ The image below demonstrates the application dashboard showcasing a sample AOC w
 some of the features have been updated since the demo was captured, and the current version may have additional functionalities or improvements.
 
 ![Tool Demo](https://github.com/AkusChhabra/AOC-Obstacle-Parser/blob/main/documents/Tool_Demo.png)
+
+```
+
+```
