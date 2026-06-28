@@ -1,3 +1,15 @@
+"""
+
+Made by A.Chhabra
+
+app.py runs the Flask application allowing users to upload files, processes them, 
+and provides an easy to use web interface, simplifying the user experience.  
+
+Due to constraints of node.js not being enabled in the desired environment,
+flask was used to create a local server that can be accessed through a web browser.
+
+"""
+
 import os
 import sys
 import signal
@@ -30,22 +42,6 @@ app = Flask(
 def index():
    return render_template('main.html')
 
-#@app.route("/main.js")
-#def main_js():
-#    return app.send_static_file('js/main.js')
-
-#@app.route('/shutdown', methods=['POST'])
-#def shutdown():
-#    # Retrieve the shutdown function from the Werkzeug server
-#    shutdown_func = request.environ.get('werkzeug.server.shutdown')
-#    if shutdown_func is None:
-#        # Fallback to os.kill if running in production/different WSGI
-#        os.kill(os.getpid(), signal.SIGINT)
-#        return 'Server killed'
-#    
-#    shutdown_func()
-#    return 'Server shutting down...'
-
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
      os._exit(0)
@@ -55,13 +51,6 @@ def shutdown():
 #def add_header(response):
 #    response.headers['Cache-Control'] = 'no-store'
 #    return response
-
-## Functions
-#def checkPath(file_path):
-#    if file_path:
-#        print(f"Selected file: {file_path}")
-#    else:
-#        print("User cancelled the dialog.")
 
 if __name__ == '__main__':
    webbrowser.open("http://127.0.0.1:5000")
