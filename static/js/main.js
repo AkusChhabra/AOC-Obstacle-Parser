@@ -450,9 +450,8 @@ function updateTable() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
     <td><span class="obs-id">${o.id}</span></td>
-    <td>${m.long}${typeof m.long === 'number' ? ' m' : ''}</td>
-    <td>${m.lat}${typeof m.lat === 'number' ? ' m' : ''}</td>
-    <td>${m.dist}${typeof m.dist === 'number' ? ' m' : ''}</td>
+    <td>${m.long}${typeof m.long === 'number' ? '' : ''}</td>
+    <td>${m.lat}${typeof m.lat === 'number' ? '' : ''}</td>
     <td><input type="text" value="${o.elev}" placeholder="Enter elev" oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
     <td><button class="icon-btn" title="Delete" onclick="deleteObs('${o.uid}')" style="font-size:12px" aria-label="Delete">×</button></td>`;
     tbody.appendChild(tr);
@@ -525,6 +524,11 @@ function resetAll() {
     document.getElementById('calib-unit').disabled = false
 
     document.getElementById('btn-confirm-dir').classList.add('flash-bg');
+    document.getElementById('btn-rwy').classList.remove('flash-bg');
+    document.getElementById('btn-obs').classList.remove('flash-bg');
+    document.getElementById('btn-calib').classList.remove('flash-bg');
+
+    document.getElementById('btn-calib').disabled = true
     document.getElementById('btn-upload').disabled = false
 
     //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
