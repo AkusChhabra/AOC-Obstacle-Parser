@@ -562,6 +562,7 @@ function resetAll() {
     document.getElementById('calib-unit').value = 'm'
     document.getElementById('rwy-input').value = ''
     document.getElementById('elev-label').value = 'ft'
+    document.getElementById('to-dir').value = 'left'
 
     //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
     //document.getElementById('s-count').textContent = '0';
