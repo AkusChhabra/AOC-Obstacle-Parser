@@ -521,6 +521,13 @@
         </svg>
         Download Image
       </button>
+
+      <input type="text" id="icao-input" placeholder="Enter ICAO code"
+        style="margin-left:100px; border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
+
+      <input type="text" id="rwy-input" placeholder="Enter RWY #"
+        style="margin-left:10px; border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
+      
       <button class="btn danger" onclick="resetAll()" style="margin-left:auto">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="1 4 1 10 7 10" />
@@ -529,7 +536,6 @@
         Reset
       </button>
     </div>
-
     <!-- Sidebar -->
     <div id="sidebar">
       <!-- Upload -->

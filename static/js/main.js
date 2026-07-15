@@ -478,14 +478,39 @@ function undoLast() {
 // ── Export Data ───────────────────────────────────────────────
 function exportCSV() {
     elev_unit = document.getElementById('elev-label').value;
-    let csv = 'obstacle_id,DER_m,lateral_m,elevation_' + elev_unit + '\n';
-    obstacles.forEach(o => {
-    const m = calibMpp && runwayEnd ? measure(o) : { long: '', lat: '', dist: '' };
-    csv += `${o.id},${m.long},${m.lat},"${o.elev}"\n`;
-    });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-    a.download = 'aoc_obstacles.csv'; a.click();
+
+    if (elev_unit == "m") {
+        elev_ft = []
+        obstacles.forEach(o => {
+            o.elev_ft = (parseFloat(o.elev) / 0.3048).toFixed(2);
+        });
+        let csv = 'obstacle_id,DER_m,lateral_m,elevation_ft,elevation_' + elev_unit + '\n';
+        obstacles.forEach(o => {
+            const m = calibMpp && runwayEnd ? measure(o) : { long: '', lat: '', dist: '' };
+            csv += `${o.id},${m.long},${m.lat},"${o.elev_ft}","${o.elev}"\n`;
+        });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        
+        const icao = document.getElementById('icao-input').value.trim().toUpperCase();
+        const rwy = document.getElementById('rwy-input').value.trim().toUpperCase();
+
+        a.download = `${icao}_RWY${rwy}_aoc_obstacles.csv`; a.click();
+    }
+    else {
+        let csv = 'obstacle_id,DER_m,lateral_m,elevation_' + elev_unit + '\n';
+        obstacles.forEach(o => {
+            const m = calibMpp && runwayEnd ? measure(o) : { long: '', lat: '', dist: '' };
+            csv += `${o.id},${m.long},${m.lat},"${o.elev}"\n`;
+        });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+
+        const icao = document.getElementById('icao-input').value.trim().toUpperCase();
+        const rwy = document.getElementById('rwy-input').value.trim().toUpperCase();
+
+        a.download = `${icao}_RWY${rwy}_aoc_obstacles.csv`; a.click();
+    }
 }
 
 // ── Export Image ──────────────────────────────────────────────
@@ -494,7 +519,10 @@ function exportCanvas() {
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement('a');
-    link.download = 'aoc_obstacles_overlay.png';
+    const icao = document.getElementById('icao-input').value.trim().toUpperCase(); 
+    const rwy = document.getElementById('rwy-input').value.trim().toUpperCase();
+
+    link.download = `${icao}_RWY${rwy}_aoc_obstacles.png`;
     link.href = url;
     link.click();
 
@@ -530,6 +558,10 @@ function resetAll() {
 
     document.getElementById('btn-calib').disabled = true
     document.getElementById('btn-upload').disabled = false
+    document.getElementById('calib-dist').value = '1000'
+    document.getElementById('calib-unit').value = 'm'
+    document.getElementById('rwy-input').value = ''
+    document.getElementById('elev-label').value = 'ft'
 
     //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
     //document.getElementById('s-count').textContent = '0';
