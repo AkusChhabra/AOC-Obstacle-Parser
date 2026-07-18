@@ -29,14 +29,6 @@ function loadChart(e) {
     loadImageFile(file);
 }
 
-/*
-function onDrop(e) {
-    e.preventDefault();
-    document.getElementById('upload-zone').classList.remove('drag');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) loadImageFile(file);
-} */
-
 function loadImageFile(file) {
     const reader = new FileReader();
     reader.onload = ev => {
@@ -68,13 +60,6 @@ function disableUpload() {
     document.getElementById('btn-upload').classList.remove('flash-bg');
     document.getElementById('btn-upload').disabled = true
 }
-
-/*
-function enableUpload() {
-    document.getElementById('btn-upload').classList.add('flash-bg');
-    document.getElementById('btn-upload').disabled = false
-}
-    */
 
 function enableUI() {
     ['btn-calib', 'btn-rwy', 'btn-obs', 'btn-export', 'to-dir', 'btn-confirm-dir'].forEach(id => {
@@ -479,7 +464,7 @@ function undoLast() {
 function exportCSV() {
     elev_unit = document.getElementById('elev-label').value;
     const icao = document.getElementById('icao-input').value.trim().toUpperCase();
-    const rwy = document.getElementById('rwy-input').value.trim();
+    const rwy = document.getElementById('rwy-input').value.trim().toUpperCase();
     const eff_date = document.getElementById('eff-date-input').value.trim().toUpperCase();
 
     if (elev_unit == "m") {
