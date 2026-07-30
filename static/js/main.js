@@ -461,17 +461,27 @@ function undoLast() {
 }
 
 // ── Export Data ───────────────────────────────────────────────
-function exportCSV() {
+function exportData() {
     elev_unit = document.getElementById('elev-label').value;
     const icao = document.getElementById('icao-input').value.trim().toUpperCase();
     const rwy = document.getElementById('rwy-input').value.trim().toUpperCase();
     const eff_date_raw = document.getElementById('eff-date-input').value.trim();
 
-    console.log("eff_date_raw: ", eff_date_raw);
+    //console.log("eff_date_raw: ", eff_date_raw);
 
     const dateStr = new Date(eff_date_raw);
 
-    console.log("dateStr: ", dateStr);
+    //console.log("dateStr: ", dateStr);
+    
+    if (icao === '' || rwy === '') {
+        alert("Please enter both ICAO code and runway number.");
+        return;
+    }
+
+    if (isNaN(dateStr.getTime())) {
+        alert("Please enter a valid effective date in the format YYYY-MM-DD.");
+        return;
+    }
 
     const eff_date = dateStr.toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -480,7 +490,7 @@ function exportCSV() {
         timeZone: 'UTC'
     }).toUpperCase();
     
-    console.log("eff_date: ", eff_date);
+    //console.log("eff_date: ", eff_date);
 
     if (elev_unit == "m") {
         elev_ft = []
@@ -492,11 +502,29 @@ function exportCSV() {
             const m = calibMpp && runwayEnd ? measure(o) : { long: '', lat: '', dist: '' };
             csv += `${o.id},${m.long},${m.lat},"Obst ${String(o.id)}, AOC RWY${rwy}, ${eff_date}","${o.elev_ft}","${o.elev}"\n`;
         });
-        
+
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
 
+        document.body.appendChild(a);
         a.download = `${icao}_RWY${rwy}_aoc_obstacles.csv`; a.click();
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+
+        let txt = 'DER_m\tlateral_m\tname\televation_ft\n';
+        obstacles.forEach(o => {
+            const m = calibMpp && runwayEnd ? measure(o) : { long: '', lat: '', dist: '' };
+            txt += `${m.long}\t${m.lat}\tObst ${String(o.id)}, AOC RWY${rwy}, ${eff_date}\t${o.elev_ft}\n`;
+        });
+
+        a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+
+        document.body.appendChild(a);
+        a.download = `${icao} RWY${rwy} - WEF ${eff_date}.txt`; a.click();
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);        
     }
     if (elev_unit == "ft") {
         let csv = 'obstacle_id,DER_m,lateral_m,name,elevation_' + elev_unit + '\n';
@@ -507,8 +535,28 @@ function exportCSV() {
         
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-
+        
+        document.body.appendChild(a);
         a.download = `${icao}_RWY${rwy}_aoc_obstacles.csv`; a.click();
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+        
+        let txt = 'DER_m\tlateral_m\tname\televation_ft\n';
+        obstacles.forEach(o => {
+            const m = calibMpp && runwayEnd ? measure(o) : { long: '', lat: '', dist: '' };
+            txt += `${m.long}\t${m.lat}\tObst ${String(o.id)}, AOC RWY${rwy}, ${eff_date}\t${o.elev}\n`;
+        });
+
+        a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+
+        console.log('txt: ', txt);
+
+        document.body.appendChild(a);
+        a.download = `${icao} RWY${rwy} - WEF ${eff_date}.txt`; a.click();
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
     }
 }
 
