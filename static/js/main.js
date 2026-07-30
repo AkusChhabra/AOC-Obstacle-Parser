@@ -465,7 +465,22 @@ function exportCSV() {
     elev_unit = document.getElementById('elev-label').value;
     const icao = document.getElementById('icao-input').value.trim().toUpperCase();
     const rwy = document.getElementById('rwy-input').value.trim().toUpperCase();
-    const eff_date = document.getElementById('eff-date-input').value.trim().toUpperCase();
+    const eff_date_raw = document.getElementById('eff-date-input').value.trim();
+
+    console.log("eff_date_raw: ", eff_date_raw);
+
+    const dateStr = new Date(eff_date_raw);
+
+    console.log("dateStr: ", dateStr);
+
+    const eff_date = dateStr.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC'
+    }).toUpperCase();
+    
+    console.log("eff_date: ", eff_date);
 
     if (elev_unit == "m") {
         elev_ft = []
