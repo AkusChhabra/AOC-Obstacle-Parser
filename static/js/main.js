@@ -569,6 +569,7 @@ function exportCanvas() {
     document.getElementById('tog-dims').checked = false;
     document.getElementById('tog-labels').checked = false;
     document.getElementById('tog-ids').checked = true;
+    draw();
 
     canvas.toBlob((blob) => {
     const url = URL.createObjectURL(blob);
