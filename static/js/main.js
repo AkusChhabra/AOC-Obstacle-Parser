@@ -434,7 +434,7 @@ function updateTable() {
     const m = calibMpp && runwayEnd ? measure(o) : { long: '—', lat: '—', dist: '—' };
     const tr = document.createElement('tr');
     tr.innerHTML = `
-    <td><span class="obs-id">${o.id}</span></td>
+    <td><input type="text" class="obs-id" value="${o.id}" oninput="obstacles.find(x=>x.uid==='${o.uid}').id=this.value;draw()"></span></td>
     <td>${m.long}${typeof m.long === 'number' ? '' : ''}</td>
     <td>${m.lat}${typeof m.lat === 'number' ? '' : ''}</td>
     <td><input type="text" value="${o.elev}" placeholder="Enter elev" oninput="obstacles.find(x=>x.uid==='${o.uid}').elev=this.value;draw()"></td>
