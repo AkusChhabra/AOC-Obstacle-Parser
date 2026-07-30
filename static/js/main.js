@@ -565,6 +565,11 @@ function exportData() {
 
 // ── Export Image ──────────────────────────────────────────────
 function exportCanvas() {
+
+    document.getElementById('tog-dims').checked = false;
+    document.getElementById('tog-labels').checked = false;
+    document.getElementById('tog-ids').checked = true;
+
     canvas.toBlob((blob) => {
     const url = URL.createObjectURL(blob);
 
@@ -618,6 +623,10 @@ function resetAll() {
     document.getElementById('icao-input').classList.add('flash-bg');
     document.getElementById('rwy-input').classList.add('flash-bg');
     document.getElementById('eff-date-input').classList.add('flash-bg');
+
+    document.getElementById('tog-dims').checked = true;
+    document.getElementById('tog-labels').checked = true;
+    document.getElementById('tog-ids').checked = true;
 
     //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
     //document.getElementById('s-count').textContent = '0';
