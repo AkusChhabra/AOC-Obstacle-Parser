@@ -15,6 +15,7 @@ import sys
 import signal
 import webbrowser
 from flask import Flask, flash, request, render_template, Flask, jsonify
+from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
 import pymupdf
 import tkinter as tk
@@ -38,6 +39,8 @@ app = Flask(
     static_folder=os.path.join(base_dir, 'static')
 )
 
+ui = FlaskUI(app=app, server="flask", width=800, height=600) 
+
 @app.route("/",  methods = ['GET', 'POST'])
 def index():
    return render_template('main.html')
@@ -53,5 +56,7 @@ def shutdown():
 #    return response
 
 if __name__ == '__main__':
-   webbrowser.open("http://127.0.0.1:5000")
-   app.run(host='127.0.0.1', port=5000, debug=False)
+   #webbrowser.open("http://127.0.0.1:5000")
+   #app.run(host='127.0.0.1', port=5000, debug=False)
+    FlaskUI(app=app, server="flask").run()
+   #ui.run()
