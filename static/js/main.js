@@ -42,6 +42,9 @@ function loadImageFile(file) {
         document.getElementById('to-dir').disabled = false;
         document.getElementById('btn-confirm-dir').disabled = false;
         document.getElementById('btn-confirm-dir').classList.add('flash-bg');
+        document.getElementById('icao-input').classList.add('flash-bg');
+        document.getElementById('rwy-input').classList.add('flash-bg');
+        document.getElementById('eff-date-input').classList.add('flash-bg');
 
         document.getElementById('chart-info').style.display = 'block';
         document.getElementById('chart-info').textContent =
@@ -612,6 +615,10 @@ function resetAll() {
     document.getElementById('to-dir').value = 'left'
     document.getElementById('eff-date-input').value = ''
 
+    document.getElementById('icao-input').classList.add('flash-bg');
+    document.getElementById('rwy-input').classList.add('flash-bg');
+    document.getElementById('eff-date-input').classList.add('flash-bg');
+
     //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
     //document.getElementById('s-count').textContent = '0';
     //enableUpload()
@@ -624,6 +631,22 @@ function resetAll() {
 
 // ── Hint ──────────────────────────────────────────────────────
 function setHint(msg) { document.getElementById('hint-bar').textContent = msg; }
+
+const icao = document.getElementById('icao-input');
+const rwy = document.getElementById('rwy-input');
+const effDate = document.getElementById('eff-date-input');
+
+icao.addEventListener('input', () => {
+    icao.classList.remove('flash-bg');
+});
+
+rwy.addEventListener('input', () => {
+    rwy.classList.remove('flash-bg');
+});
+
+effDate.addEventListener('input', () => {
+    effDate.classList.remove('flash-bg');
+});
 
 // Init
 window.addEventListener('resize', () => { if (img) fitView(); });
