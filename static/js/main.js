@@ -1,25 +1,27 @@
-  const canvas = document.getElementById('main-canvas');
-  const ctx = canvas.getContext('2d');
-  const area = document.getElementById('canvas-area');
+//import mupdf from "mupdf";
 
-  // State
-  let img = null;
-  let zoomLevel = 1, panX = 0, panY = 0;
-  let isPanning = false, panStart = null;
-  let mode = 'calibrate';
-  let calibPts = [], calibMpp = null;
-  let runwayEnd = null;
-  let obstacles = [], obsCount = 0;
-  let hoverPt = null;
+const canvas = document.getElementById('main-canvas');
+const ctx = canvas.getContext('2d');
+const area = document.getElementById('canvas-area');
 
-  // Colors
-  const C = {
-    blue: '#378ADD', blueD: '#0C447C',
-    green: '#1D9E75', greenD: '#085041',
-    amber: '#EF9F27', amberD: '#633806',
-    red: '#D85A30', redD: '#712B13',
-    white: '#ffffff',
-  };
+// State
+let img = null;
+let zoomLevel = 1, panX = 0, panY = 0;
+let isPanning = false, panStart = null;
+let mode = 'calibrate';
+let calibPts = [], calibMpp = null;
+let runwayEnd = null;
+let obstacles = [], obsCount = 0;
+let hoverPt = null;
+
+// Colors
+const C = {
+blue: '#378ADD', blueD: '#0C447C',
+green: '#1D9E75', greenD: '#085041',
+amber: '#EF9F27', amberD: '#633806',
+red: '#D85A30', redD: '#712B13',
+white: '#ffffff',
+};
 
 
 // ── File loading ──────────────────────────────────────────────
@@ -27,6 +29,24 @@ function loadChart(e) {
     const file = e.target.files[0];
     if (!file) return;
     loadImageFile(file);
+}
+
+// ── Convert PDF to PNG ────────────────────────────────────────
+function convert2image() {
+
+    const doc = mupdf.Document.openDocument(pdfBuffer, "application/pdf");
+    const page = doc.loadPage(0); 
+
+    // 2. Define the scale matrix (1 means 100% size/72 DPI. Use 2 for higher resolution)
+    const matrix = mupdf.Matrix.scale(3, 3);
+
+    // 3. Render the page layout directly into a Pixmap
+    const pixmap = page.toPixmap(matrix, mupdf.ColorSpace.DeviceRGB, false, true);
+
+    // 4. Convert the rendered pixmap into a PNG byte array
+    const pngBuffer = pixmap.asPNG();
+    
+    return pngBuffer;
 }
 
 function loadImageFile(file) {

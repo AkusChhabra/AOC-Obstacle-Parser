@@ -212,3 +212,10 @@ To-DO (AOC Obstacle Measurement Too.md
 Archive/
 PIL_test.py
 scale.py
+app.build/
+app.dist/
+app.onefile-build/
+Nuitka Build/
+nuitka-crash-report.xml
+dist/
+AOC_Obstacle_Tool_Logo.ico

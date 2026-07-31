@@ -287,8 +287,8 @@
  }
 
  .obs-id {
-     width: 18px;
-     height: 18px;
+     width: 30px;
+     height: 30px;
      border-radius: 50%;
      background: var(--red-bg);
      color: var(--red-text);
@@ -296,6 +296,7 @@
      font-weight: 600;
      display: inline-flex;
      align-items: center;
+     text-align: center;
      justify-content: center;
  }
 
