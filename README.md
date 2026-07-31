@@ -53,8 +53,8 @@ to change but serves as a preliminary design reference for the application's dev
 The image below demonstrates the application dashboard showcasing a sample AOC with its data parsed and ready for export. Do note that
 some of the features have been updated since the demo was captured, and the current version may have additional functionalities or improvements.
 
-![Tool Demo](https://github.com/AkusChhabra/AOC-Obstacle-Parser/blob/main/documents/Tool_Demo.png)
+![Tool Demo](https://github.com/AkusChhabra/AOC-Obstacle-Parser/blob/main/documents/Tool_Demo_V2.png)
 
-```
+This project is continuously undergoing improvements and updates. For the latest features, bug fixes, and enhancements, please refer to the [release notes](https://github.com/AkusChhabra/AOC-Obstacle-Parser/releases).
 
-```
+If you have any suggestions, feedback, or encounter any issues while using the application, please feel free to open an issue on the [GitHub repository](https://github.com/AkusChhabra/AOC-Obstacle-Parser/issues).
