@@ -477,6 +477,22 @@ function undoLast() {
     else if (runwayEnd) { runwayEnd = null; draw(); }
 }
 
+function checkInputs(icao, rwy, eff_date_raw) {
+
+    if (icao === '' || rwy === '') {
+        alert("Please enter both ICAO code and runway number.");
+        return false;
+    }
+
+    const dateStr = new Date(eff_date_raw);
+    if (isNaN(dateStr.getTime())) {
+        alert("Please enter a valid effective date in the format YYYY-MM-DD.");
+        return false;
+    }
+
+    return true;
+}
+
 // ── Export Data ───────────────────────────────────────────────
 function exportData() {
     elev_unit = document.getElementById('elev-label').value;
@@ -490,15 +506,7 @@ function exportData() {
 
     //console.log("dateStr: ", dateStr);
     
-    if (icao === '' || rwy === '') {
-        alert("Please enter both ICAO code and runway number.");
-        return;
-    }
-
-    if (isNaN(dateStr.getTime())) {
-        alert("Please enter a valid effective date in the format YYYY-MM-DD.");
-        return;
-    }
+    if (!checkInputs(icao, rwy, eff_date_raw)) return;
 
     const eff_date = dateStr.toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -579,6 +587,12 @@ function exportData() {
 
 // ── Export Image ──────────────────────────────────────────────
 function exportCanvas() {
+
+    const icao = document.getElementById('icao-input').value.trim().toUpperCase();
+    const rwy = document.getElementById('rwy-input').value.trim().toUpperCase();
+    const eff_date_raw = document.getElementById('eff-date-input').value.trim();
+
+    if (!checkInputs(icao, rwy, eff_date_raw)) return;
 
     document.getElementById('tog-dims').checked = false;
     document.getElementById('tog-labels').checked = false;
