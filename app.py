@@ -12,14 +12,13 @@ flask was used to create a local server that can be accessed through a web brows
 
 import os
 import sys
-import signal
-import webbrowser
-from flask import Flask, flash, request, render_template, Flask, jsonify
+#import signal
+#import webbrowser
+#from flask import Flask, flash, request, render_template, jsonify
+from flask import Flask, render_template
 from flaskwebgui import FlaskUI
-from werkzeug.utils import secure_filename, redirect
-import pymupdf
-import tkinter as tk
-from tkinter import filedialog
+#from werkzeug.utils import secure_filename, redirect
+#import pymupdf
 
 app = Flask(__name__)
 
