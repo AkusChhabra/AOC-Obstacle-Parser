@@ -39,24 +39,29 @@ function loadImageFile(file) {
         canvas.height = image.naturalHeight;
         fitView();
         //enableUI();
-        document.getElementById('to-dir').disabled = false;
-        document.getElementById('btn-confirm-dir').disabled = false;
-        document.getElementById('btn-confirm-dir').classList.add('flash-bg');
-        document.getElementById('icao-input').classList.add('flash-bg');
-        document.getElementById('rwy-input').classList.add('flash-bg');
-        document.getElementById('eff-date-input').classList.add('flash-bg');
+
+        directionInit();
 
         document.getElementById('chart-info').style.display = 'block';
         document.getElementById('chart-info').textContent =
         `${file.name} · ${image.naturalWidth}×${image.naturalHeight}px`;
-        setMode('calibrate');
-        setHint('Step 1: Click the start of a known distance on the scale bar');
-        draw();
     };
     image.src = ev.target.result;
     };
     reader.readAsDataURL(file);
     disableUpload();
+}
+
+function directionInit() {
+
+    document.getElementById('to-dir').disabled = false;
+    document.getElementById('btn-confirm-dir').disabled = false;
+    document.getElementById('btn-confirm-dir').classList.add('flash-bg');
+    document.getElementById('icao-input').classList.add('flash-bg');
+    document.getElementById('rwy-input').classList.add('flash-bg');
+    document.getElementById('eff-date-input').classList.add('flash-bg');
+
+    setHint('Please set the takeoff direction.')
 }
 
 function disableUpload() {
@@ -133,6 +138,9 @@ function confirmDirection() {
 
     document.getElementById('btn-calib').disabled = false;
     document.getElementById('btn-calib').classList.add('flash-bg');
+
+    setMode('calibrate');
+    draw();
 }
 
 // ── Mouse events ──────────────────────────────────────────────
@@ -271,7 +279,13 @@ function finishCalibration() {
 
 function setMode(m) {
     mode = m;
-    if (m === 'calibrate') { calibPts = []; document.getElementById('calib-result').style.display = 'none'; calibMpp = null; document.getElementById('scale-badge').style.display = 'none'; }
+    if (m === 'calibrate') {
+        setHint('Step 1: Click the start of a known distance on the scale bar');
+        calibPts = [];
+        document.getElementById('calib-result').style.display = 'none';
+        calibMpp = null;
+        document.getElementById('scale-badge').style.display = 'none';
+    }
     ['btn-calib', 'btn-rwy', 'btn-obs'].forEach(id => document.getElementById(id).classList.remove('active'));
     const map = { calibrate: 'btn-calib', runway: 'btn-rwy', obstacle: 'btn-obs' };
     document.getElementById(map[m]).classList.add('active');
@@ -635,8 +649,8 @@ function resetAll() {
     updateTable();
     //disableUI();
     //setMode('runway');
-    if (img) { setMode('calibrate'); draw(); }
-    else setHint('Upload a chart to begin');
+    if (img) { directionInit(); }
+    else setHint('Upload a chart to begin or set the takoff direction if already uploaded.');
 }
 
 // ── Hint ──────────────────────────────────────────────────────
