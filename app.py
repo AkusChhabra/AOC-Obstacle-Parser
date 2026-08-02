@@ -53,10 +53,10 @@ def shutdown():
      os._exit(0)
 
 
-@app.route('/api/receive-data', methods=['POST'])
+@app.route('/api/upload-data', methods=['POST'])
 def receive_data():
 
-    print("Received request to /api/receive-data")
+    print("Received request to /api/upload-data")
 
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -70,7 +70,7 @@ def receive_data():
     file.save(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename))
     print(f"File saved to: {os.path.join(app.root_path, 'static', 'uploads', file.filename)}")
     
-    print(f"Received data: File={file.filename}, Scale={scale}")
+    print(f"Uploaded data: File={file.filename}, Scale={scale}")
 
     #file_bytes = file.read()
 
@@ -83,15 +83,22 @@ def receive_data():
         matrix = pymupdf.Matrix(zoom, zoom)
         pix = page.get_pixmap(matrix=matrix)
         
-        pix.save(f"page-{page.number}.png")
+        pix.save(f"{os.path.join(app.root_path, 'static', 'uploads', file.filename.split('.')[0])}_page-{page.number}.png")
 
     inputFile.close()
     
     # Send a JSON response back to Frontend
     return jsonify({
         "status": "success", 
-        "message": f"Data received for {file}!"
+        "message": f"Data uploaded for {file}!"
     }), 200
+
+
+@app.route('/api/download-data', methods=['GET'])
+def download_data():
+    # Implementation for downloading processed data
+    pass
+
 
 
 ## Cache Control

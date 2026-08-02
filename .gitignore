@@ -220,3 +220,4 @@ nuitka-crash-report.xml
 dist/
 AOC_Obstacle_Tool_Logo.ico
 static/node_modules/
+static/uploads/

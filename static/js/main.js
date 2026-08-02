@@ -28,45 +28,6 @@ function loadChart(e) {
     if (!file) return;
     loadImageFile(file);
 }
-/*
-function uploadFile() {
-
-    const fileInput = document.getElementById('file-input');
-    fileInput.addEventListener('change', () => {
-        if (!fileInput.files.length) return alert('Please select a file first.');
-        const fileName = fileInput.files[0];
-
-        // Send raw binary file in body. Pass filename in custom header.
-        const response = fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-            'X-Filename': encodeURIComponent(fileName.name),
-            'Content-Type': fileName.type || 'application/octet-stream'
-        },
-        body: fileName 
-    });
-
-    const result = response.json();
-    alert(result.message);
-
-    });
-    //if (!fileInput.files.length) return alert('Please select a file first.');
-    
-    /*const file = fileInput.files[0];
-    
-    // Send raw binary file in body. Pass filename in custom header.
-    const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-            'X-Filename': encodeURIComponent(file.name),
-            'Content-Type': file.type || 'application/octet-stream'
-        },
-        body: file 
-    });
-
-    const result = await response.json();
-    alert(result.message);
-}*/
 
 function loadImageFile(file) {
     const reader = new FileReader();
@@ -76,8 +37,8 @@ function loadImageFile(file) {
     const filepath = event.target.files[0];
     console.log("file", filepath);
 
-    const tempUrl = URL.createObjectURL(filepath); 
-    console.log("tempUrl: ", tempUrl);
+    //const tempUrl = URL.createObjectURL(filepath); 
+    //console.log("tempUrl: ", `tempUrl`);
 
     // Check if the file is a PDF
     if (file.type === 'application/pdf') {
@@ -95,11 +56,8 @@ function loadImageFile(file) {
 
         console.log("pdfReader (payload): ", pdfReader)
 
-       // uploadFile();
-
-        // Send POST request to the Flask server
-        
-        fetch('/api/receive-data', {
+        // Send POST request to the Flask server to upload the PDF file and scale value
+        fetch('/api/upload-data', {
             method: 'POST',
             //headers: {
                 //'Content-Type': 'application/json',
@@ -115,11 +73,29 @@ function loadImageFile(file) {
             console.error('Error:', error);
         });
 
-        //pdf2image(file.name, scaleVal)
+
+        // Setup a download stream from backend Flask server to read in png data
+        fetch('/api/download-data', {
+            method: 'GET',
+            body: pdfReader
+        })
+        .then(response => response.json())  
+        .then(data => {
+            console.log('Success from Flask:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        
+        // readImage();
     }
 
     else if (file.type === 'image/png' || file.type === 'image/jpeg') {
-        reader.onload = ev => {
+        readImage();
+}
+
+function readImage() {
+    reader.onload = ev => {
             const image = new Image();
             image.onload = () => {
                 img = image;
