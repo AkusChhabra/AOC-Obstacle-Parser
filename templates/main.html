@@ -6,7 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AOC Obstacle Measurement Tool</title>
   <link rel="shortcut icon" href="{{ url_for('static', filename='./../../static/AOC_Obstacle_Tool_Logo.ico')}}" type="image/x-icon">
-  <script type=text/javascript src="{{url_for('static', filename='js/main.js')}}" defer></script>
+  
+  <!--<script src="https://unpkg.com/pdf-to-img@6.2.0/dist/index.js"></script>-->
+  <!--<script type="module" src="{{ url_for('static', filename='./node_modules/pdf-to-img/dist/index.js')}}"></script>-->
+
+  <!--<script src="{{ url_for('static', filename='./node_modules/pdf-to-img/pdf-to-img.js')}}"></script>-->
+
+  <script src="{{url_for('static', filename='js/main.js')}}" defer></script>
   <link rel="stylesheet" href="{{url_for('static', filename='js/style.css')}}">
 </head>
 
@@ -25,7 +31,7 @@
         </svg>
         Upload chart
       </button>
-      <input type="file" id="file-input" accept="image/*" onchange="loadChart(event)" style="display: none;">
+      <input type="file" id="file-input" accept="image/*, application/pdf" onchange="loadChart(event)" style="display: none;">
       <div class="sep"></div>
       <button class="btn" id="btn-export" onclick="exportData()" disabled style="background:#90EE90">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

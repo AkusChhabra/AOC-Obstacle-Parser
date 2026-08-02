@@ -1,5 +1,3 @@
-//import mupdf from "mupdf";
-
 const canvas = document.getElementById('main-canvas');
 const ctx = canvas.getContext('2d');
 const area = document.getElementById('canvas-area');
@@ -31,45 +29,73 @@ function loadChart(e) {
     loadImageFile(file);
 }
 
-// ── Convert PDF to PNG ────────────────────────────────────────
-function convert2image() {
-
-    const doc = mupdf.Document.openDocument(pdfBuffer, "application/pdf");
-    const page = doc.loadPage(0); 
-
-    // 2. Define the scale matrix (1 means 100% size/72 DPI. Use 2 for higher resolution)
-    const matrix = mupdf.Matrix.scale(3, 3);
-
-    // 3. Render the page layout directly into a Pixmap
-    const pixmap = page.toPixmap(matrix, mupdf.ColorSpace.DeviceRGB, false, true);
-
-    // 4. Convert the rendered pixmap into a PNG byte array
-    const pngBuffer = pixmap.asPNG();
-    
-    return pngBuffer;
-}
-
 function loadImageFile(file) {
     const reader = new FileReader();
-    reader.onload = ev => {
-    const image = new Image();
-    image.onload = () => {
-        img = image;
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        fitView();
-        //enableUI();
 
+    /*reader.onload = function (e) {
+        console.log(e.target.result);
+    };*/
+    reader.onload = function () {
+        return URL.createObjectURL(uploadedFile);
+     }
+
+    const readText = reader.readAsText(file);
+
+    console.log("readAsText: ", readText);
+
+    // Check if the file is a PDF
+    if (file.type === 'application/pdf') {
+        console.log("PDF file detected. Converting to PNG...");
+        const pdfReader = new FileReader();
+        console.log("file: ", file);
+
+        const scaleVal = 2; // temporary
+
+        const payload = {
+            fileData: file,
+            scale: scaleVal
+        };
+
+        console.log("payload: ", payload)
+
+        // Send POST request to the Flask server
+        fetch('/api/receive-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())  
+        .then(data => {
+            console.log('Success from Flask:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        //pdf2image(file.name, scaleVal)
+    }
+
+    else if (file.type === 'image/png' || file.type === 'image/jpeg') {
+        reader.onload = ev => {
+            const image = new Image();
+            image.onload = () => {
+                img = image;
+                canvas.width = image.naturalWidth;
+                canvas.height = image.naturalHeight;
+                fitView();
+
+                //document.getElementById('chart-info').style.display = 'block';
+                //document.getElementById('chart-info').textContent = `${file.name} · ${image.naturalWidth}×${image.naturalHeight}px`;
+            };
+            image.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+        disableUpload();
         directionInit();
-
-        document.getElementById('chart-info').style.display = 'block';
-        document.getElementById('chart-info').textContent =
-        `${file.name} · ${image.naturalWidth}×${image.naturalHeight}px`;
-    };
-    image.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-    disableUpload();
+    }
 }
 
 function directionInit() {
@@ -689,6 +715,12 @@ function resetAll() {
 
 // ── Hint ──────────────────────────────────────────────────────
 function setHint(msg) { document.getElementById('hint-bar').textContent = msg; }
+
+document.getElementById('btn-upload').addEventListener('click', function(event) {
+    console.log('Clicked!');
+});
+
+
 
 const icao = document.getElementById('icao-input');
 const rwy = document.getElementById('rwy-input');
