@@ -28,15 +28,34 @@ function loadChart(e) {
     if (!file) return;
     loadImageFile(file);
 }
+/*
+function uploadFile() {
 
-async function uploadFile() {
     const fileInput = document.getElementById('file-input');
-    if (!fileInput.files.length) return alert('Please select a file first.');
+    fileInput.addEventListener('change', () => {
+        if (!fileInput.files.length) return alert('Please select a file first.');
+        const fileName = fileInput.files[0];
+
+        // Send raw binary file in body. Pass filename in custom header.
+        const response = fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+            'X-Filename': encodeURIComponent(fileName.name),
+            'Content-Type': fileName.type || 'application/octet-stream'
+        },
+        body: fileName 
+    });
+
+    const result = response.json();
+    alert(result.message);
+
+    });
+    //if (!fileInput.files.length) return alert('Please select a file first.');
     
-    const file = fileInput.files[0];
+    /*const file = fileInput.files[0];
     
     // Send raw binary file in body. Pass filename in custom header.
-    const response = await fetch('/upload', {
+    const response = await fetch('/api/upload', {
         method: 'POST',
         headers: {
             'X-Filename': encodeURIComponent(file.name),
@@ -47,17 +66,14 @@ async function uploadFile() {
 
     const result = await response.json();
     alert(result.message);
-}
+}*/
 
 function loadImageFile(file) {
     const reader = new FileReader();
-
     /*reader.onload = function (e) {
         console.log(e.target.result);
     };*/
-
     const filepath = event.target.files[0];
-
     console.log("file", filepath);
 
     const tempUrl = URL.createObjectURL(filepath); 
@@ -66,27 +82,30 @@ function loadImageFile(file) {
     // Check if the file is a PDF
     if (file.type === 'application/pdf') {
         console.log("PDF file detected. Converting to PNG...");
-        const pdfReader = new FileReader();
+
+        const pdfReader = new FormData();
         console.log("file: ", file);
+
+        const fileInput = document.getElementById('file-input');
 
         const scaleVal = 2; // temporary
 
-        const payload = {
-            fileData: tempUrl,
-            scale: scaleVal
-        };
+        pdfReader.append("file", fileInput.files[0]);
+        pdfReader.append("scale", scaleVal);
 
-        console.log("payload: ", payload)
+        console.log("pdfReader (payload): ", pdfReader)
+
+       // uploadFile();
 
         // Send POST request to the Flask server
-        /*
+        
         fetch('/api/receive-data', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify(payload)
+            //headers: {
+                //'Content-Type': 'application/json',
+                //'Access-Control-Allow-Origin': '*'
+            //},
+            body: pdfReader
         })
         .then(response => response.json())  
         .then(data => {
@@ -94,7 +113,7 @@ function loadImageFile(file) {
         })
         .catch(error => {
             console.error('Error:', error);
-        });*/
+        });
 
         //pdf2image(file.name, scaleVal)
     }
@@ -741,7 +760,7 @@ document.getElementById('btn-upload').addEventListener('click', function(event) 
     console.log('Clicked!');
 });
 
-
+//uploadFile();
 
 const icao = document.getElementById('icao-input');
 const rwy = document.getElementById('rwy-input');

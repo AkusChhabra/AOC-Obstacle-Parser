@@ -23,15 +23,18 @@
     <div id="topbar">
       <h1>AOC Obstacle Measurement Tool</h1>
       <div class="sep"></div>
-      <button class="btn flash-bg" id="btn-upload" onclick="document.getElementById('file-input').click()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-          <polyline points="17 8 12 3 7 8" />
-          <line x1="12" y1="3" x2="12" y2="15" />
-        </svg>
-        Upload chart
-      </button>
-      <input type="file" id="file-input" accept="image/*, application/pdf" onchange="loadChart(event)" style="display: none;">
+      <!--<form action="/upload" method="POST" enctype="multipart/form-data">-->
+        <button class="btn flash-bg" id="btn-upload" onclick="document.getElementById('file-input').click()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Upload chart
+        </button>
+        <input type="file" id="file-input" accept="image/*, application/pdf" onchange="loadChart(event)" style="display: none;">
+        <!--<input type="submit" id="submit-btn" style="display: none;">-->
+      <!--</form>-->
       <div class="sep"></div>
       <button class="btn" id="btn-export" onclick="exportData()" disabled style="background:#90EE90">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

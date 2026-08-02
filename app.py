@@ -14,13 +14,13 @@ import os
 import sys
 import json
 import pymupdf
-from flask import Flask, render_template, send_from_directory, request, jsonify
+from flask import Flask, render_template, send_from_directory, request, jsonify, url_for, Response
 from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'static/'
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 app.secret_key = "secret key" # not required as user data is not being stored, but added for future use if needed
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -29,6 +29,9 @@ if hasattr(sys, '_MEIPASS'):
     base_dir = sys._MEIPASS
 else:
     base_dir = os.path.abspath(".")
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 app = Flask(
     __name__,
@@ -48,26 +51,26 @@ def index():
 def shutdown():
      os._exit(0)
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        # Check if the post request has the file part
-        if 'file' not in request.files:
-            return 'No file part'
-        
-        file = request.files['file']
-        
-        # If the user does not select a file
-        if file.filename == '':
-            return 'No selected file'
-        
-        if file:
-            # Clean the filename for security
-            filename = secure_filename(file.filename)
-            
-            # Save the file to the target path
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
+#@app.route('/', methods=['GET', 'POST'])
+#def upload_file():
+#    if request.method == 'POST':
+#        # Check if the post request has the file part
+#        if 'file' not in request.files:
+#            return 'No file part'
+#        
+#        file = request.files['file']
+#        
+#        # If the user does not select a file
+#        if file.filename == '':
+#            return 'No selected file'
+#        
+#        if file:
+#            # Clean the filename for security
+#            filename = secure_filename(file.filename)
+#            
+#            # Save the file to the target path
+#            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+#            file.save(file_path)
 
 @app.route('/api/receive-data', methods=['POST'])
 def receive_data():
@@ -75,33 +78,61 @@ def receive_data():
 
     print("Received request to /api/receive-data")
 
-    data = request.get_json()
-    data = json.loads(data) if isinstance(data, str) else data
-    print("data: ", data)
-    
-    # Access individual variables safely
-    file = data.get('fileData')
-    scale = data.get('scale')
-    
-    # Process your data here (e.g., save to database)
-    print(f"Received data: File={file}, Scale={scale}")
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
 
-    inputFile = pymupdf.open(file)
+    file = request.files['file']  # Access the uploaded file
 
-    for page in inputFile:
-        zoom = 5.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
-        matrix = pymupdf.Matrix(zoom, zoom)
-        pix = page.get_pixmap(matrix=matrix)
-        
-        pix.save(f"page-{page.number}.png")
+    scale = request.form.get('scale', default=1, type=int)
 
-    inputFile.close()
+    print("file_obj: ", file)  # Print the filename for debugging
+
+    file.save(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename))
     
-    # Send a JSON response back to JavaScript
+    print(f"Received data: File={file.filename}, Scale={scale}")
+
+    #inputFile = pymupdf.open(file)
+    #for page in inputFile:
+    #    zoom = 5.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
+    #    matrix = pymupdf.Matrix(zoom, zoom)
+    #    pix = page.get_pixmap(matrix=matrix)
+    #    
+    #    pix.save(f"page-{page.number}.png")
+    #inputFile.close()
+    
+    # Send a JSON response back to Frontend
     return jsonify({
         "status": "success", 
         "message": f"Data received for {file}!"
     }), 200
+
+
+#@app.route('/upload', methods=['GET', 'POST'])
+#def upload_file():
+#    if request.method == 'POST':
+#        # Check if the post request has the file part
+#        if 'file' not in request.files:
+#            return 'No file part'
+#        
+#        file = request.files['file']
+#        
+#        # If the user does not select a file
+#        if file.filename == '':
+#            return 'No selected file'
+#        
+#        if file:
+#            # Clean the filename for security
+#            filename = secure_filename(file.filename)
+#            
+#            # Save the file to the target path
+#            file_path = os.path.join(os.path.join(app.root_path, 'static', 'uploads'), filename)
+#            file.save(file_path)
+#            
+#            # Redirect to view the file
+#            #return redirect(url_for('static', filename=f'uploads/{filename}'))
+#            
+#    #return render_template('upload.html')
+
 
 ## Cache Control
 #@app.after_request
