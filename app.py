@@ -47,34 +47,14 @@ app = Flask(
 def index():
    return render_template('main.html')
 
+
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
      os._exit(0)
 
-#@app.route('/', methods=['GET', 'POST'])
-#def upload_file():
-#    if request.method == 'POST':
-#        # Check if the post request has the file part
-#        if 'file' not in request.files:
-#            return 'No file part'
-#        
-#        file = request.files['file']
-#        
-#        # If the user does not select a file
-#        if file.filename == '':
-#            return 'No selected file'
-#        
-#        if file:
-#            # Clean the filename for security
-#            filename = secure_filename(file.filename)
-#            
-#            # Save the file to the target path
-#            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#            file.save(file_path)
 
 @app.route('/api/receive-data', methods=['POST'])
 def receive_data():
-    # Extract JSON data from the request body
 
     print("Received request to /api/receive-data")
 
@@ -88,50 +68,30 @@ def receive_data():
     print("file_obj: ", file)  # Print the filename for debugging
 
     file.save(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename))
+    print(f"File saved to: {os.path.join(app.root_path, 'static', 'uploads', file.filename)}")
     
     print(f"Received data: File={file.filename}, Scale={scale}")
 
-    #inputFile = pymupdf.open(file)
-    #for page in inputFile:
-    #    zoom = 5.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
-    #    matrix = pymupdf.Matrix(zoom, zoom)
-    #    pix = page.get_pixmap(matrix=matrix)
-    #    
-    #    pix.save(f"page-{page.number}.png")
-    #inputFile.close()
+    #file_bytes = file.read()
+
+    #inputFile = pymupdf.open(stream=file_bytes, filetype="pdf")
+    print(f"Opening file: {os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename)}")
+    inputFile = pymupdf.open(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename), filetype="pdf")
+
+    for page in inputFile:
+        zoom = 3.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
+        matrix = pymupdf.Matrix(zoom, zoom)
+        pix = page.get_pixmap(matrix=matrix)
+        
+        pix.save(f"page-{page.number}.png")
+
+    inputFile.close()
     
     # Send a JSON response back to Frontend
     return jsonify({
         "status": "success", 
         "message": f"Data received for {file}!"
     }), 200
-
-
-#@app.route('/upload', methods=['GET', 'POST'])
-#def upload_file():
-#    if request.method == 'POST':
-#        # Check if the post request has the file part
-#        if 'file' not in request.files:
-#            return 'No file part'
-#        
-#        file = request.files['file']
-#        
-#        # If the user does not select a file
-#        if file.filename == '':
-#            return 'No selected file'
-#        
-#        if file:
-#            # Clean the filename for security
-#            filename = secure_filename(file.filename)
-#            
-#            # Save the file to the target path
-#            file_path = os.path.join(os.path.join(app.root_path, 'static', 'uploads'), filename)
-#            file.save(file_path)
-#            
-#            # Redirect to view the file
-#            #return redirect(url_for('static', filename=f'uploads/{filename}'))
-#            
-#    #return render_template('upload.html')
 
 
 ## Cache Control
