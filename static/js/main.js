@@ -67,7 +67,17 @@ function loadImageFile(file) {
         })
         .then(response => response.json())  
         .then(data => {
-            console.log('Success from Flask:', data);
+            console.log("Response from server:", data);    
+            data.images.forEach(imgData => {
+                
+            const imgTag = document.createElement('img');
+            imgTag.src = imgData.data;
+            imgTag.alt = imgData.filename;
+            
+            document.body.appendChild(imgTag);
+                
+            console.log("imgTag.src: ", imgTag.src);
+            });
         })
         .catch(error => {
             console.error('Error:', error);
@@ -75,20 +85,17 @@ function loadImageFile(file) {
 
 
         // Setup a download stream from backend Flask server to read in png data
-        fetch('/api/download-data', {
-            method: 'GET',
-            body: pdfReader
+        /*fetch('/api/download-data')
+        .then(response => response.blob())
+        .then(blob => {
+            const objectURL = URL.createObjectURL(blob);
+            document.getElementById('my-img-tag').src = objectURL;
         })
-        .then(response => response.json())  
-        .then(data => {
-            console.log('Success from Flask:', data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-        
+        .catch(error => console.error('Error fetching PNG:', error));*/
+                
         // readImage();
-    }
+
+        }
 
     else if (file.type === 'image/png' || file.type === 'image/jpeg') {
         readImage();

@@ -14,7 +14,7 @@ import os
 import sys
 import json
 import pymupdf
-from flask import Flask, render_template, send_from_directory, request, jsonify, url_for, Response
+from flask import Flask, render_template, send_from_directory, request, jsonify, send_file
 from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
 
@@ -78,25 +78,36 @@ def receive_data():
     print(f"Opening file: {os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename)}")
     inputFile = pymupdf.open(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename), filetype="pdf")
 
+    pg_count = 0
     for page in inputFile:
         zoom = 3.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
         matrix = pymupdf.Matrix(zoom, zoom)
         pix = page.get_pixmap(matrix=matrix)
         
         pix.save(f"{os.path.join(app.root_path, 'static', 'uploads', file.filename.split('.')[0])}_page-{page.number}.png")
+        pg_count += 1
 
     inputFile.close()
+
+    image_list = []
+
+    for i in range(pg_count):
+        image_list.append({
+            "filename": file.filename,
+            #"data": f"{os.path.join(app.root_path, 'static', 'uploads', file.filename.split('.')[0])}_page-{i}.png"
+            "data": f"./static/uploads/{file.filename.split('.')[0]}_page-{i}.png"
+        })
+
+    return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
     
     # Send a JSON response back to Frontend
-    return jsonify({
-        "status": "success", 
-        "message": f"Data uploaded for {file}!"
-    }), 200
+    #return jsonify({ "status": "success", "message": f"Data uploaded for {file}!",}), 200
 
 
 @app.route('/api/download-data', methods=['GET'])
 def download_data():
     # Implementation for downloading processed data
+    #send_file(file, mimetype='image/png')
     pass
 
 
