@@ -29,19 +29,39 @@ function loadChart(e) {
     loadImageFile(file);
 }
 
+async function uploadFile() {
+    const fileInput = document.getElementById('file-input');
+    if (!fileInput.files.length) return alert('Please select a file first.');
+    
+    const file = fileInput.files[0];
+    
+    // Send raw binary file in body. Pass filename in custom header.
+    const response = await fetch('/upload', {
+        method: 'POST',
+        headers: {
+            'X-Filename': encodeURIComponent(file.name),
+            'Content-Type': file.type || 'application/octet-stream'
+        },
+        body: file 
+    });
+
+    const result = await response.json();
+    alert(result.message);
+}
+
 function loadImageFile(file) {
     const reader = new FileReader();
 
     /*reader.onload = function (e) {
         console.log(e.target.result);
     };*/
-    reader.onload = function () {
-        return URL.createObjectURL(uploadedFile);
-     }
 
-    const readText = reader.readAsText(file);
+    const filepath = event.target.files[0];
 
-    console.log("readAsText: ", readText);
+    console.log("file", filepath);
+
+    const tempUrl = URL.createObjectURL(filepath); 
+    console.log("tempUrl: ", tempUrl);
 
     // Check if the file is a PDF
     if (file.type === 'application/pdf') {
@@ -52,13 +72,14 @@ function loadImageFile(file) {
         const scaleVal = 2; // temporary
 
         const payload = {
-            fileData: file,
+            fileData: tempUrl,
             scale: scaleVal
         };
 
         console.log("payload: ", payload)
 
         // Send POST request to the Flask server
+        /*
         fetch('/api/receive-data', {
             method: 'POST',
             headers: {
@@ -73,7 +94,7 @@ function loadImageFile(file) {
         })
         .catch(error => {
             console.error('Error:', error);
-        });
+        });*/
 
         //pdf2image(file.name, scaleVal)
     }

@@ -16,7 +16,7 @@ import json
 import pymupdf
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from flaskwebgui import FlaskUI
-#from werkzeug.utils import secure_filename, redirect
+from werkzeug.utils import secure_filename, redirect
 
 app = Flask(__name__)
 
@@ -48,6 +48,26 @@ def index():
 def shutdown():
      os._exit(0)
 
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # Check if the post request has the file part
+        if 'file' not in request.files:
+            return 'No file part'
+        
+        file = request.files['file']
+        
+        # If the user does not select a file
+        if file.filename == '':
+            return 'No selected file'
+        
+        if file:
+            # Clean the filename for security
+            filename = secure_filename(file.filename)
+            
+            # Save the file to the target path
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
 
 @app.route('/api/receive-data', methods=['POST'])
 def receive_data():
