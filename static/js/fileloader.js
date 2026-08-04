@@ -52,10 +52,10 @@ function loadImageFile(file) {
                     
                 console.log("Fetching preview images from server...");
 
-                window.location.href = "/preview-images";
+                //window.location.href = "/preview-images";
 
-                //const container = document.getElementById("gallery");
-                //container.appendChild(imgTag);
+                const container = document.getElementById("gallery");
+                container.appendChild(imgTag);
 
                 console.log("Redirected to /preview-images for image selection.");
             });
