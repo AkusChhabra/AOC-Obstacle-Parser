@@ -66,32 +66,43 @@ function loadImageFile(file) {
             body: pdfReader
         })
         .then(response => response.json())  
-        .then(data => {
-            console.log("Response from server:", data);    
-            data.images.forEach(imgData => {
-                
-            const imgTag = document.createElement('img');
-            imgTag.src = imgData.data;
-            imgTag.alt = imgData.filename;
+            .then(data => {
             
-            document.body.appendChild(imgTag);
+            console.log("Response from server:", data);
+
+            const imgTag = document.createElement('img');
                 
-            console.log("imgTag.src: ", imgTag.src);
+            data.images.forEach(imgData => {
+                imgTag.src = imgData.data;
+                imgTag.alt = imgData.filename;
+                
+                console.log("imgTag.src: ", imgTag.src);
+                    
+                // 1) Showcase images in a div container and allow user to select one for processing
+                    
+                console.log("Fetching preview images from server...");
+
+                window.location.href = "/preview-images";
+
+                //const imageSelectorURL = "{{ url_for('image_selector') | tojson }}";
+                //window.location.href = imageSelectorURL;
+
+                //const container = document.getElementById("gallery");
+                //container.appendChild(imgTag);
+
+                console.log("Redirected to /preview-images for image selection.");
+                /*fetch('/preview-images')
+                    .then(response => response.json())
+                    .then(data => { 
+                        console.log("Preview images response:", data);
+                })*/
             });
         })
         .catch(error => {
             console.error('Error:', error);
         });
 
-
-        // Setup a download stream from backend Flask server to read in png data
-        /*fetch('/api/download-data')
-        .then(response => response.blob())
-        .then(blob => {
-            const objectURL = URL.createObjectURL(blob);
-            document.getElementById('my-img-tag').src = objectURL;
-        })
-        .catch(error => console.error('Error fetching PNG:', error));*/
+        // 2) Once image is selected, call readImage() with the selected image's data URL to load it into the canvas
                 
         // readImage();
 

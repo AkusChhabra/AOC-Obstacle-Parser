@@ -1,0 +1,33 @@
+{% extends "main.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+{% endblock %}
+
+{% block content %}
+<body>
+    <div id="app">
+        <div id="topbar">
+            <h1>AOC Obstacle Measurement Tool</h1>
+            <div class="sep"></div>
+            Select the appropriate Aerodrome Obstacle Chart image.
+        </div>
+        <div>
+            <div id="gallery" class="selectable-image"></div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+
+<script>
+    /*function togglePopup(show) {
+        const modal = document.getElementById('popupModal');
+        modal.style.display = show ? 'flex' : 'none';
+    }
+    window.onclick = function (event) {
+            const modal = document.getElementById('popupModal');
+            if (event.target === modal) {
+                togglePopup(false);
+            }
+    }*/
+</script>

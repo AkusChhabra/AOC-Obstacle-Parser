@@ -18,20 +18,12 @@ from flask import Flask, render_template, send_from_directory, request, jsonify,
 from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
 
-app = Flask(__name__)
-
-UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
-app.secret_key = "secret key" # not required as user data is not being stored, but added for future use if needed
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+#app = Flask(__name__)
 
 if hasattr(sys, '_MEIPASS'):
     base_dir = sys._MEIPASS
 else:
     base_dir = os.path.abspath(".")
-
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 app = Flask(
     __name__,
@@ -39,12 +31,22 @@ app = Flask(
     static_folder=os.path.join(base_dir, 'static')
 )
 
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
+app.secret_key = "secret key" # not required as user data is not being stored, but added for future use if needed
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 #@app.route('/node_modules/<path:filename>')
 #def serve_node_modules(filename):
 #    return send_from_directory(os.path.join(app.root_path, 'node_modules'), filename)
 
 @app.route("/",  methods = ['GET', 'POST'])
 def index():
+    #return render_template('image_selector.html')
    return render_template('main.html')
 
 
@@ -62,7 +64,6 @@ def receive_data():
         return jsonify({"error": "No file part"}), 400
 
     file = request.files['file']  # Access the uploaded file
-
     scale = request.form.get('scale', default=1, type=int)
 
     print("file_obj: ", file)  # Print the filename for debugging
@@ -90,7 +91,6 @@ def receive_data():
     inputFile.close()
 
     image_list = []
-
     for i in range(pg_count):
         image_list.append({
             "filename": file.filename,
@@ -103,14 +103,14 @@ def receive_data():
     # Send a JSON response back to Frontend
     #return jsonify({ "status": "success", "message": f"Data uploaded for {file}!",}), 200
 
-
-@app.route('/api/download-data', methods=['GET'])
-def download_data():
-    # Implementation for downloading processed data
-    #send_file(file, mimetype='image/png')
-    pass
-
-
+@app.route('/preview-images')
+def preview_images():
+    try:
+        #print("Received request to /preview-images")
+        return render_template('image_selector.html')
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        return "An error occurred while rendering the template.", 500
 
 ## Cache Control
 #@app.after_request
@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
     # 1) Development/Debugging
 
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 
     # 2) Production/Desktop GUI

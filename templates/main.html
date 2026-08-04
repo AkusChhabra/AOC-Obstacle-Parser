@@ -5,25 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AOC Obstacle Measurement Tool</title>
-  <link rel="shortcut icon" href="{{ url_for('static', filename='./../../static/AOC_Obstacle_Tool_Logo.ico')}}" type="image/x-icon">
-  
-  <!--<script src="https://unpkg.com/pdf-to-img@6.2.0/dist/index.js"></script>-->
-  <!--<script type="module" src="{{ url_for('static', filename='./node_modules/pdf-to-img/dist/index.js')}}"></script>-->
-
-  <!--<script src="{{ url_for('static', filename='./node_modules/pdf-to-img/pdf-to-img.js')}}"></script>-->
-
-  <script src="{{url_for('static', filename='js/main.js')}}" defer></script>
-  <link rel="stylesheet" href="{{url_for('static', filename='js/style.css')}}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='AOC_Obstacle_Tool_Logo.ico')}}" type="image/x-icon">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 </head>
 
+{% block body %}
 <body>
   <div id="app">
-
     <!-- Top bar -->
     <div id="topbar">
       <h1>AOC Obstacle Measurement Tool</h1>
       <div class="sep"></div>
-      <!--<form action="/upload" method="POST" enctype="multipart/form-data">-->
         <button class="btn flash-bg" id="btn-upload" onclick="document.getElementById('file-input').click()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
@@ -33,8 +25,6 @@
           Upload chart
         </button>
         <input type="file" id="file-input" accept="image/*, application/pdf" onchange="loadChart(event)" style="display: none;">
-        <!--<input type="submit" id="submit-btn" style="display: none;">-->
-      <!--</form>-->
       <div class="sep"></div>
       <button class="btn" id="btn-export" onclick="exportData()" disabled style="background:#90EE90">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -234,4 +224,12 @@
     </div>
   </div>
 </body>
+{% endblock body%}
+{% block javascript %}
+  {% if request.endpoint == 'index' %}
+    <script src="{{ url_for('static',filename='js/fileloader.js') }}"></script>
+  {% elif request.endpoint == 'preview_images' %}
+    <!--<script src="{{ url_for('static',filename='js/fileloader.js') }}"></script>-->
+  {% endif %}
+{% endblock %}
 </html>

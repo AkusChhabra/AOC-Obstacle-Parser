@@ -1,0 +1,58 @@
+{% extends "main.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/image_selector.css')}}">
+{% endblock styles %}
+
+{% block body %}
+    <div id="app">
+        <div id="topbar">
+            <h1>AOC Obstacle Measurement Tool</h1>
+            <div class="sep"></div>
+            <div class="scale-container">
+                <!-- Live dynamic numeric feedback -->
+                <div class="value-display" id="output">3.0</div>
+                <div class="slider-wrapper">
+                    <!-- Native HTML range element sets the min, max, and starting index -->
+                    <input type="range" min="1.1" max="5.0" value="3.0" step="0.1" class="scale-slider" id="scale">
+                    <!-- Structural placeholder for custom JavaScript tick lines -->
+                    <div class="scale-ticks" id="ticks-container"></div>
+                </div>
+            </div>
+            <div class="sep"></div>
+            <div>
+                Upload File
+                <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png">
+            </div>
+        </div>
+        <div>
+            <div id="gallery" class="selectable-image"></div>
+        </div>
+    </div> 
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static',filename='js/fileloader.js') }}">
+    </script>
+    <script>
+        const slider = document.getElementById('scale');
+        const output = document.getElementById('output');
+        const ticksContainer = document.getElementById('ticks-container');
+
+        // Dynamic tick generator setup
+        const min = parseInt(slider.min);
+        const max = parseInt(slider.max);
+        const step = 25; // Places a custom tick mark label every 25 units
+
+        for (let i = min; i <= max; i += step) {
+            const tick = document.createElement('div');
+            tick.classList.add('tick');
+            tick.setAttribute('data-value', i);
+            ticksContainer.appendChild(tick);
+        }
+
+        // Live updating listener event triggers during the active dragging process
+        slider.addEventListener('input', (e) => {
+            output.textContent = e.target.value;
+        });</script>
+{% endblock %}
