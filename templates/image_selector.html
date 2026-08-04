@@ -1,8 +1,6 @@
 {% extends "main.html" %}
 
-{% block styles %}
-    <link rel="stylesheet" href="{{url_for('static', filename='css/image_selector.css')}}">
-{% endblock styles %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/image_selector_styles.css')}}">
 
 {% block body %}
     <div id="app">
@@ -33,8 +31,12 @@
                 <input type="file" id="file-input" accept="image/*, application/pdf" onchange="loadChart(event)" style="display: none;">
             </div>
         </div>
-        <div>
-            <div id="gallery" class="selectable-image"></div>
+        <div class="gallery-spacing">
+            <div class="image-container">
+                <div>
+                    <div id="gallery"></div>
+                </div>
+            </div>
         </div>
     </div> 
 {% endblock %}

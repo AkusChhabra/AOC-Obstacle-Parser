@@ -38,28 +38,30 @@ function loadImageFile(file) {
         .then(response => response.json())  
             .then(data => {
             
-            console.log("Response from server:", data);
-
-            const imgTag = document.createElement('img');
-                
-            data.images.forEach(imgData => {
-                imgTag.src = imgData.data;
-                imgTag.alt = imgData.filename;
-                
-                console.log("imgTag.src: ", imgTag.src);
-                    
-                // 1) Showcase images in a div container and allow user to select one for processing
-                    
-                console.log("Fetching preview images from server...");
-
-                //window.location.href = "/preview-images";
+                console.log("Response from server:", data);
 
                 const container = document.getElementById("gallery");
-                container.appendChild(imgTag);
+                    
+                data.images.forEach(imgData => {
+                    
+                    const imgTag = document.createElement('img');
 
-                console.log("Redirected to /preview-images for image selection.");
-            });
-        })
+                    imgTag.src = imgData.data;
+                    imgTag.alt = imgData.filename;
+                    
+                    console.log("imgTag.src: ", imgTag.src);
+                    console.log("Fetching preview images from server...");
+
+
+                    imgTag.classList.add("selectable-image");
+
+                    //window.location.href = "/preview-images";
+
+                    container.appendChild(imgTag);
+
+                    console.log("Redirected to /preview-images for image selection.");
+                });
+            })
         .catch(error => {
             console.error('Error:', error);
         });

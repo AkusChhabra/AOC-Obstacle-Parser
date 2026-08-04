@@ -466,9 +466,38 @@
      }
  }
 
- .selectable-image:hover {
-     opacity: 0.8;
-     transform: scale(1.05);
-     transition: all 0.3s ease;
-     /* Smooth animation */
- }
+    .selectable-image:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+        /* Smooth animation */
+    }
+
+  .image-container {
+      display: flex;
+      gap: 15px;
+      /* Adjusts the spacing between images */
+  }
+
+  /* Controls how the images behave inside the row */
+  .image-container img {
+      flex: 1;
+      /* Makes all images take up equal width */
+      width: 100%;
+      /* Ensures images fill their container space */
+      max-width: 500px;
+      /* Optional: limits the maximum size */
+      height: auto;
+      /* Keeps the aspect ratio intact */
+  }
+
+  .gallery-spacing {
+    /* 1. The Border itself */
+    border: 2px solid black;
+
+    /* 2. Spacing OUTSIDE the border (pushes other elements away) */
+    margin: 20px;
+
+    /* 3. Spacing INSIDE the border (keeps content from touching the line) */
+    padding: 15px;
+  }
