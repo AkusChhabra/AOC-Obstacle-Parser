@@ -97,9 +97,13 @@ function sendImgData(imgURL) {
         method: 'POST',
         body: imgURL
     })
-    .then(
-        //window.location.href = "/AOC Parser"
-    )
+    .then(response => response.text())
+    .then(html => {
+        // Force the browser to overwrite itself with the rendered template
+        document.open();
+        document.write(html);
+        document.close();
+    })
     .catch(error => {
         console.error('Error:', error);
     });

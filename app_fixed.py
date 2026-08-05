@@ -99,16 +99,12 @@ def receive_data():
 
 @app.route('/analyze', methods=['POST','GET'])
 def get_image():
-    try:
-        img = None
-        if request.method == 'POST':
-            img = request.form.get("src")
-            print("selected_img: ", img)
-        #return render_template('main.html', selected_img=selected_img)
-        return render_template('main.html', selected_img=img)
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        return "An error occurred while rendering the template.", 500
+    img = None
+    if request.method == 'POST':
+        img = request.form.get("src")
+        print("selected_img: ", img)
+    print("rendering main.html")
+    return render_template('main.html', selected_img=img)
 
 @app.route("/test",  methods = ['GET', 'POST'])
 def test():

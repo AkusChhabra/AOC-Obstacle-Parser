@@ -28,14 +28,30 @@ function loadChart(e) {
     loadImageFile(file);
 }
 
-function loadImageFile(file) {
+function loadImageFile(url) {
     //else if (file.type === 'image/png' || file.type === 'image/jpeg') {
-    const reader = new FileReader();
-    readImage();
+    //const reader = new FileReader();
+    readImage(url);
 }
 
-function readImage() {
-    reader.onload = ev => {
+function readImage(url) {
+    const getMeta = async (url) => {
+        const image = new Image();
+        img = image;
+        img.src = url;
+        await img.decode();  
+        return img
+    };
+    getMeta(url).then(img => {
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight
+        
+        console.log("canvas: ", canvas);
+        fitView();
+        disableUpload();
+        directionInit();
+    })
+    /*reader.onload = ev => {
             const image = new Image();
             image.onload = () => {
                 img = image;
@@ -47,10 +63,8 @@ function readImage() {
                 //document.getElementById('chart-info').textContent = `${file.name} · ${image.naturalWidth}×${image.naturalHeight}px`;
             };
             image.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-        disableUpload();
-        directionInit();
+        };*/
+    //reader.readAsDataURL(file);
 }
 
 
@@ -87,6 +101,7 @@ function disableUI() {
 
 // ── View transform ────────────────────────────────────────────
 function fitView() {
+    console.log("entered fitView");
     if (!img) return;
     /*if (mode === 'runway') {
     setHint('Click the end of the runway to continue');
@@ -115,6 +130,7 @@ function zoom(factor) {
 }
 
 function applyTransform() {
+    console.log("entered applyTransform");
     canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
     draw();
 }
@@ -337,6 +353,7 @@ function draw() {
     if (!img) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
+    console.log("draw img")
 
     const showDims = document.getElementById('tog-dims').checked;
     const showLabels = document.getElementById('tog-labels').checked;
