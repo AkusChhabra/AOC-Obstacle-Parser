@@ -75,11 +75,13 @@ function loadImageFile(file) {
                     images.forEach(img => img.classList.remove('selected'));
                     image.classList.add('selected');
 
-                    console.log("img:", img)
+                    console.log("img:", image.src)
 
                     // Call main script
-                    //sendImgData(img);
 
+                    const imgURL = new FormData();
+                    imgURL.append("src", image.src)
+                    sendImgData(imgURL);
                 });
             });
 
@@ -90,17 +92,15 @@ function loadImageFile(file) {
     }
 }
 
-function sendImgData(img) {
+function sendImgData(imgURL) {
     fetch('/analyze', {
         method: 'POST',
-        body: img.src
+        body: imgURL
     })
-        .then(response => response.json())
-        .then(data => {
-                
-            
-            })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    .then(
+        //window.location.href = "/AOC Parser"
+    )
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }

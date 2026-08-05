@@ -97,15 +97,22 @@ def receive_data():
 
     return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
 
-@app.route('/analyze')
-def run_analysis():
+@app.route('/analyze', methods=['POST','GET'])
+def get_image():
     try:
-        incoming_text = request.form.get('user_message') 
-        #print("Received request to /preview-images")
-        return render_template('main.html')
+        img = None
+        if request.method == 'POST':
+            img = request.form.get("src")
+            print("selected_img: ", img)
+        #return render_template('main.html', selected_img=selected_img)
+        return render_template('main.html', selected_img=img)
     except Exception as e:
         print(f"Error rendering template: {e}")
         return "An error occurred while rendering the template.", 500
+
+@app.route("/test",  methods = ['GET', 'POST'])
+def test():
+    return render_template('main.html')
 
 if __name__ == '__main__':
    #webbrowser.open("http://127.0.0.1:5000")

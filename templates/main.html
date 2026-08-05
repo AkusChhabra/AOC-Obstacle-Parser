@@ -228,5 +228,10 @@
 
 {% block javascript %}
   <script src="{{ url_for('static',filename='js/main.js') }}"></script>
-{% endblock %}
+    <script type="text/javascript">
+      var imgURL = "{{ selected_img }}";
+      console.log("imgURL: ", imgURL)
+      loadImageFile(imgURL);
+    </script>
+{% endblock javascript %}
 </html>

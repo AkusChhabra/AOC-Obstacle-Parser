@@ -21,7 +21,6 @@ red: '#D85A30', redD: '#712B13',
 white: '#ffffff',
 };
 
-
 // ── File loading ──────────────────────────────────────────────
 function loadChart(e) {
     const file = e.target.files[0];
