@@ -41,7 +41,8 @@ function loadImageFile(file) {
                 console.log("Response from server:", data);
 
                 const container = document.getElementById("gallery");
-                    
+                
+                i = 0
                 data.images.forEach(imgData => {
                     
                     const imgTag = document.createElement('img');
@@ -54,21 +55,52 @@ function loadImageFile(file) {
 
 
                     imgTag.classList.add("selectable-image");
+                    imgTag.id = "img_" + i;
 
                     //window.location.href = "/preview-images";
 
                     container.appendChild(imgTag);
+                    i += 1
 
                     console.log("Redirected to /preview-images for image selection.");
                 });
+
+
+            const images = document.querySelectorAll('.selectable-image');
+
+            console.log("images: ", images);
+
+            images.forEach(image => {
+                image.addEventListener('click', () => {
+                    images.forEach(img => img.classList.remove('selected'));
+                    image.classList.add('selected');
+
+                    console.log("img:", img)
+
+                    // Call main script
+                    //sendImgData(img);
+
+                });
+            });
+
             })
         .catch(error => {
             console.error('Error:', error);
         });
+    }
+}
 
-        // 2) Once image is selected, call readImage() with the selected image's data URL to load it into the canvas
+function sendImgData(img) {
+    fetch('/analyze', {
+        method: 'POST',
+        body: img.src
+    })
+        .then(response => response.json())
+        .then(data => {
                 
-        // readImage();
-
-        }
+            
+            })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }

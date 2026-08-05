@@ -225,11 +225,8 @@
   </div>
 </body>
 {% endblock body%}
+
 {% block javascript %}
-  {% if request.endpoint == 'index' %}
-    <script src="{{ url_for('static',filename='js/fileloader.js') }}"></script>
-  {% elif request.endpoint == 'preview_images' %}
-    <!--<script src="{{ url_for('static',filename='js/fileloader.js') }}"></script>-->
-  {% endif %}
+  <script src="{{ url_for('static',filename='js/main.js') }}"></script>
 {% endblock %}
 </html>

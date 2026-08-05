@@ -97,9 +97,10 @@ def receive_data():
 
     return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
 
-@app.route('/preview-images')
-def preview_images():
+@app.route('/analyze')
+def run_analysis():
     try:
+        incoming_text = request.form.get('user_message') 
         #print("Received request to /preview-images")
         return render_template('main.html')
     except Exception as e:

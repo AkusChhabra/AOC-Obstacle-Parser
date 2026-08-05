@@ -30,86 +30,9 @@ function loadChart(e) {
 }
 
 function loadImageFile(file) {
+    //else if (file.type === 'image/png' || file.type === 'image/jpeg') {
     const reader = new FileReader();
-    /*reader.onload = function (e) {
-        console.log(e.target.result);
-    };*/
-    const filepath = event.target.files[0];
-    console.log("file", filepath);
-
-    //const tempUrl = URL.createObjectURL(filepath); 
-    //console.log("tempUrl: ", `tempUrl`);
-
-    // Check if the file is a PDF
-    if (file.type === 'application/pdf') {
-        console.log("PDF file detected. Converting to PNG...");
-
-        const pdfReader = new FormData();
-        console.log("file: ", file);
-
-        const fileInput = document.getElementById('file-input');
-
-        const scaleVal = 2; // temporary
-
-        pdfReader.append("file", fileInput.files[0]);
-        pdfReader.append("scale", scaleVal);
-
-        console.log("pdfReader (payload): ", pdfReader)
-
-        // Send POST request to the Flask server to upload the PDF file and scale value
-        fetch('/api/upload-data', {
-            method: 'POST',
-            //headers: {
-                //'Content-Type': 'application/json',
-                //'Access-Control-Allow-Origin': '*'
-            //},
-            body: pdfReader
-        })
-        .then(response => response.json())  
-            .then(data => {
-            
-            console.log("Response from server:", data);
-
-            const imgTag = document.createElement('img');
-                
-            data.images.forEach(imgData => {
-                imgTag.src = imgData.data;
-                imgTag.alt = imgData.filename;
-                
-                console.log("imgTag.src: ", imgTag.src);
-                    
-                // 1) Showcase images in a div container and allow user to select one for processing
-                    
-                console.log("Fetching preview images from server...");
-
-                window.location.href = "/preview-images";
-
-                //const imageSelectorURL = "{{ url_for('image_selector') | tojson }}";
-                //window.location.href = imageSelectorURL;
-
-                //const container = document.getElementById("gallery");
-                //container.appendChild(imgTag);
-
-                console.log("Redirected to /preview-images for image selection.");
-                /*fetch('/preview-images')
-                    .then(response => response.json())
-                    .then(data => { 
-                        console.log("Preview images response:", data);
-                })*/
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
-        // 2) Once image is selected, call readImage() with the selected image's data URL to load it into the canvas
-                
-        // readImage();
-
-        }
-
-    else if (file.type === 'image/png' || file.type === 'image/jpeg') {
-        readImage();
+    readImage();
 }
 
 function readImage() {
@@ -129,8 +52,8 @@ function readImage() {
         reader.readAsDataURL(file);
         disableUpload();
         directionInit();
-    }
 }
+
 
 function directionInit() {
 

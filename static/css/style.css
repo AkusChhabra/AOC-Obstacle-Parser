@@ -45,6 +45,12 @@
      height: 100vh;
  }
 
+ #app-image-selector {
+     display: grid;
+     grid-template-rows: 48px 1fr;
+     height: 100vh;
+ }
+
  #topbar {
      grid-column: 1/-1;
      background: var(--surface);
@@ -473,31 +479,32 @@
         /* Smooth animation */
     }
 
+    /* The highlight style applied when selected */
+    .selectable-image.selected {
+        border-color: #007bff;
+        /* Primary blue border color */
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+        /* Glowing outer effect */
+        transform: scale(1.03);
+        /* Subtle zoom effect */
+    }
+
   .image-container {
+      margin: auto;
       display: flex;
-      gap: 15px;
-      /* Adjusts the spacing between images */
+      justify-content: center;
+      align-items: center;
   }
 
   /* Controls how the images behave inside the row */
   .image-container img {
       flex: 1;
-      /* Makes all images take up equal width */
       width: 100%;
-      /* Ensures images fill their container space */
       max-width: 500px;
       /* Optional: limits the maximum size */
       height: auto;
-      /* Keeps the aspect ratio intact */
   }
-
-  .gallery-spacing {
-    /* 1. The Border itself */
-    border: 2px solid black;
-
-    /* 2. Spacing OUTSIDE the border (pushes other elements away) */
-    margin: 20px;
-
-    /* 3. Spacing INSIDE the border (keeps content from touching the line) */
-    padding: 15px;
-  }
+  
+    .gallery-spacing {
+        margin: auto;
+    }
