@@ -88,7 +88,7 @@ function disableUI() {
 
 // ── View transform ────────────────────────────────────────────
 function fitView() {
-    console.log("entered fitView");
+    //console.log("entered fitView");
     if (!img) return;
     /*if (mode === 'runway') {
     setHint('Click the end of the runway to continue');
@@ -117,7 +117,7 @@ function zoom(factor) {
 }
 
 function applyTransform() {
-    console.log("entered applyTransform");
+    //console.log("entered applyTransform");
     canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
     draw();
 }
@@ -340,7 +340,7 @@ function draw() {
     if (!img) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
-    console.log("draw img")
+    //console.log("draw img")
 
     const showDims = document.getElementById('tog-dims').checked;
     const showLabels = document.getElementById('tog-labels').checked;
@@ -623,8 +623,14 @@ function exportCanvas() {
 // ── Reset ─────────────────────────────────────────────────────
 function resetAll() {
     if (!confirm('Reset all measurements? The chart image will be kept.')) return;
+    resetVals();
+}
+
+function resetVals() {
     calibPts = []; calibMpp = null; runwayEnd = null;
     obstacles = []; obsCount = 0;
+
+    console.log("entered reset Vals");
 
     document.getElementById('calib-result').style.display = 'none';
     document.getElementById('scale-badge').style.display = 'none';
@@ -647,7 +653,7 @@ function resetAll() {
     document.getElementById('btn-calib').classList.remove('flash-bg');
 
     document.getElementById('btn-calib').disabled = true
-    document.getElementById('btn-upload').disabled = false
+    //document.getElementById('btn-upload').disabled = false
     document.getElementById('calib-dist').value = '1000'
     document.getElementById('calib-unit').value = 'm'
     document.getElementById('rwy-input').value = ''
@@ -700,10 +706,11 @@ effDate.addEventListener('input', () => {
 
 uploadNewChart.addEventListener('click', () => {
     confirm('All progress will be lost. Are you sure you want to continue?');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    resetVals();
     img = null;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.reset();
     draw();
-    resetAll();
 
     // Change template to image_selector.html to allow user to input a new file
 
