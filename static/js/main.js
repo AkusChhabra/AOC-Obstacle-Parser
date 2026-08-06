@@ -46,25 +46,12 @@ function readImage(url) {
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight
         
+        // call the following functions once img is pulled from the uploads folder
         console.log("canvas: ", canvas);
         fitView();
-        disableUpload();
+        //disableUpload();
         directionInit();
     })
-    /*reader.onload = ev => {
-            const image = new Image();
-            image.onload = () => {
-                img = image;
-                canvas.width = image.naturalWidth;
-                canvas.height = image.naturalHeight;
-                fitView();
-
-                //document.getElementById('chart-info').style.display = 'block';
-                //document.getElementById('chart-info').textContent = `${file.name} · ${image.naturalWidth}×${image.naturalHeight}px`;
-            };
-            image.src = ev.target.result;
-        };*/
-    //reader.readAsDataURL(file);
 }
 
 
@@ -80,10 +67,10 @@ function directionInit() {
     setHint('Please set the takeoff direction.')
 }
 
-function disableUpload() {
+/*function disableUpload() {
     document.getElementById('btn-upload').classList.remove('flash-bg');
     document.getElementById('btn-upload').disabled = true
-}
+}*/
 
 function enableUI() {
     ['btn-calib', 'btn-rwy', 'btn-obs', 'btn-export', 'to-dir', 'btn-confirm-dir'].forEach(id => {
@@ -682,22 +669,22 @@ function resetAll() {
     updateTable();
     //disableUI();
     //setMode('runway');
-    if (img) { directionInit(); }
-    else setHint('Upload a chart to begin or set the takoff direction if already uploaded.');
+    directionInit();
 }
 
 // ── Hint ──────────────────────────────────────────────────────
 function setHint(msg) { document.getElementById('hint-bar').textContent = msg; }
 
-document.getElementById('btn-upload').addEventListener('click', function(event) {
+/*document.getElementById('btn-upload').addEventListener('click', function(event) {
     console.log('Clicked!');
-});
+});*/
 
 //uploadFile();
 
 const icao = document.getElementById('icao-input');
 const rwy = document.getElementById('rwy-input');
 const effDate = document.getElementById('eff-date-input');
+const uploadNewChart = document.getElementById('upload-New-Chart')
 
 icao.addEventListener('input', () => {
     icao.classList.remove('flash-bg');
@@ -709,6 +696,18 @@ rwy.addEventListener('input', () => {
 
 effDate.addEventListener('input', () => {
     effDate.classList.remove('flash-bg');
+});
+
+uploadNewChart.addEventListener('click', () => {
+    confirm('All progress will be lost. Are you sure you want to continue?');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    img = null;
+    draw();
+    resetAll();
+
+    // Change template to image_selector.html to allow user to input a new file
+
+
 });
 
 // Init

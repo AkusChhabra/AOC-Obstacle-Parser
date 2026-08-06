@@ -90,6 +90,11 @@ function loadImageFile(file) {
             console.error('Error:', error);
         });
     }
+    else if (file.type === 'image/png' || file.type === 'image/jpeg') {
+        console.log("png/jped detected");
+
+        // Add code for handling png/jpeg input
+    }
 }
 
 function sendImgData(imgURL) {

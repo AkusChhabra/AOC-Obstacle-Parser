@@ -16,16 +16,6 @@
     <div id="topbar">
       <h1>AOC Obstacle Measurement Tool</h1>
       <div class="sep"></div>
-        <button class="btn flash-bg" id="btn-upload" onclick="document.getElementById('file-input').click()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          Upload chart
-        </button>
-        <input type="file" id="file-input" accept="image/*, application/pdf" onchange="loadChart(event)" style="display: none;">
-      <div class="sep"></div>
       <button class="btn" id="btn-export" onclick="exportData()" disabled style="background:#90EE90">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
@@ -57,9 +47,22 @@
           <polyline points="1 4 1 10 7 10" />
           <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
         </svg>
-        Reset
+        Reset Measurements
+      </button>
+      
+      <div class="sep"></div>
+
+      <button id="upload-New-Chart" class="btn danger v2" style="margin-left:auto">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Upload New Chart
       </button>
     </div>
+
     <!-- Sidebar -->
     <div id="sidebar">
       <div class="s-section">

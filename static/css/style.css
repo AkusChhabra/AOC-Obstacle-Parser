@@ -137,6 +137,12 @@
      border-color: rgba(153, 60, 29, 0.3);
  }
 
+  .btn.danger.v2 {
+      background: var(--red-bg);
+      color: var(--red-text);
+      border-color: rgba(169, 7, 7, 0.3);
+  }
+
  .btn:disabled {
      opacity: 0.4;
      cursor: not-allowed;
