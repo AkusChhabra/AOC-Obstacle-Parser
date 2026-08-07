@@ -110,7 +110,7 @@ function sendImgData(imgURL) {
         method: 'POST',
         body: imgURL
     })
-    .then(response => response.text())
+    .then(response => response.json())
     .then(data => {
         console.log("data: ", data)
         console.log("data.status: ", data.status)
