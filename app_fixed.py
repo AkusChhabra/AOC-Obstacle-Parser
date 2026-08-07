@@ -42,19 +42,13 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 
 @app.route("/",  methods = ['GET', 'POST'])
-def index():
-    #return render_template('image_selector.html')
+def home():
    return render_template('image_selector.html')
 
-@app.route('/reset_session')
-def reset_session():
-    session.clear()  # Wipes out all stored cookie data for this user
-    return redirect(url_for('index'))
 
-
-@app.route('/shutdown', methods=['POST'])
-def shutdown():
-     os._exit(0)
+#@app.route('/shutdown', methods=['POST'])
+#def shutdown():
+#     os._exit(0)
 
 
 @app.route('/upload-data', methods=['POST'])
@@ -102,6 +96,7 @@ def receive_data():
 
     return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
 
+
 @app.route('/imgURL', methods=['POST','GET'])
 def get_imgURL():
     imgURL = None
@@ -111,20 +106,22 @@ def get_imgURL():
         session['imgURL'] = imgURL
     print("sending imgURL")
     return jsonify({"status": "success", "redirect": url_for('tool')})
-    return render_template('main.html', selected_img=imgURL)
+    #return render_template('main.html', selected_img=imgURL)
+
 
 @app.route('/tool')
 def tool():
     print("entered tool")
     imgURL = session.get("imgURL")
     return render_template("main.html", selected_img=imgURL)
-#@app.route('/profile')
-#def profile():
-#    img = request.args.get('imgURL')
-#
-#    print("img: ", img)
-#
-#    return render_template('main.html', selected_img=img)
+
+
+@app.route('/reset_session', methods=['POST', 'GET'])
+def reset_session():
+    session.clear()  # Wipes out all stored cookie data for this user
+    return jsonify({"status": "success", "redirect": url_for('home')})
+    #return jsonify({"redirect": url_for('home')})
+
 
 if __name__ == '__main__':
    #webbrowser.open("http://127.0.0.1:5000")

@@ -713,17 +713,27 @@ uploadNewChart.addEventListener('click', () => {
     draw();
 
     // Change template to image_selector.html to allow user to input a new file
-
+    console.log("calling /reset_session");
     fetch('/reset_session', {
-        method: 'GET',
+        method: 'POST'
     })
-    .then(response => response.text())
-    .then(html => {
+    .then(response => response.json())
+    .then(data =>  {
+        console.log("data: ", data)
+        console.log("data.status: ", data.status)
+        if (data.status == 'success') {
+            console.log("successfully entered")
+            window.location.href = data.redirect;
+        }
+    })
+    //.then(html => {
         // Force the browser to overwrite itself with the rendered template
-        document.open();
-        document.write(html);
-        document.close();
-    })
+        //document.open();
+        //document.write(html);
+        //document.close();
+
+        //window.location.href = "/"
+    //})
     .catch(error => {
         console.error('Error:', error);
     });
