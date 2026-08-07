@@ -14,7 +14,7 @@ import os
 import sys
 import json
 import pymupdf
-from flask import Flask, render_template, send_from_directory, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, session, url_for
 from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
 
@@ -46,16 +46,21 @@ def index():
     #return render_template('image_selector.html')
    return render_template('image_selector.html')
 
+@app.route('/reset_session')
+def reset_session():
+    session.clear()  # Wipes out all stored cookie data for this user
+    return redirect(url_for('index'))
+
 
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
      os._exit(0)
 
 
-@app.route('/api/upload-data', methods=['POST'])
+@app.route('/upload-data', methods=['POST'])
 def receive_data():
 
-    print("Received request to /api/upload-data")
+    print("Received request to upload-data")
 
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -98,17 +103,24 @@ def receive_data():
     return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
 
 @app.route('/analyze', methods=['POST','GET'])
-def get_image():
+def analyze():
     img = None
     if request.method == 'POST':
         img = request.form.get("src")
         print("selected_img: ", img)
     print("rendering main.html")
-    return render_template('main.html', selected_img=img)
+    return render_template('main.html', selected_img=img) # jsonify(success=True, connections=5) 
 
-@app.route("/test",  methods = ['GET', 'POST'])
+@app.route('/test')
 def test():
-    return render_template('main.html')
+    return render_template("main.html")
+#@app.route('/profile')
+#def profile():
+#    img = request.args.get('imgURL')
+#
+#    print("img: ", img)
+#
+#    return render_template('main.html', selected_img=img)
 
 if __name__ == '__main__':
    #webbrowser.open("http://127.0.0.1:5000")

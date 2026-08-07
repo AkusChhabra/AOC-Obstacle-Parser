@@ -27,7 +27,7 @@ function loadImageFile(file) {
         console.log("pdfReader (payload): ", pdfReader)
 
         // Send POST request to the Flask server to upload the PDF file and scale value
-        fetch('/api/upload-data', {
+        fetch('/upload-data', {
             method: 'POST',
             //headers: {
                 //'Content-Type': 'application/json',
@@ -75,12 +75,17 @@ function loadImageFile(file) {
                     images.forEach(img => img.classList.remove('selected'));
                     image.classList.add('selected');
 
-                    console.log("img:", image.src)
+                    console.log("img:", image.src);
 
                     // Call main script
 
                     const imgURL = new FormData();
                     imgURL.append("src", image.src)
+
+                    //imgURL = image.src;
+
+                    console.log("imgURL: ", imgURL);
+
                     sendImgData(imgURL);
                 });
             });
@@ -91,23 +96,28 @@ function loadImageFile(file) {
         });
     }
     else if (file.type === 'image/png' || file.type === 'image/jpeg') {
-        console.log("png/jped detected");
-
+        console.log("png/jpeg detected");
         // Add code for handling png/jpeg input
     }
 }
 
 function sendImgData(imgURL) {
+    //console.log("calling /profile")
+    //window.location.href = "/profile?imgURL=" + imgURL
+    
+    console.log("calling /analyze")
     fetch('/analyze', {
         method: 'POST',
         body: imgURL
     })
-    .then(response => response.text())
+        .then(response => response.text(
+        window.location.href='/analyze' 
+    ))
     .then(html => {
         // Force the browser to overwrite itself with the rendered template
-        document.open();
+        /*document.open();
         document.write(html);
-        document.close();
+        document.close();*/
     })
     .catch(error => {
         console.error('Error:', error);

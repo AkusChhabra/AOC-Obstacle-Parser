@@ -1,6 +1,4 @@
-{% extends "main.html" %}
-
-<link rel="stylesheet" href="{{url_for('static', filename='css/image_selector_styles.css')}}">
+{% extends "base.html" %}
 
 {% block body %}
     <div id="app-image-selector">
@@ -42,8 +40,7 @@
 {% endblock %}
 
 {% block javascript %}
-    <script src="{{ url_for('static',filename='js/fileloader.js') }}">
-    </script>
+    <script src="{{ url_for('static',filename='js/fileloader.js') }}"></script>
     <script>
         const slider = document.getElementById('scale');
         const output = document.getElementById('output');
@@ -65,4 +62,4 @@
         slider.addEventListener('input', (e) => {
             output.textContent = e.target.value;
         });</script>
-{% endblock %}
+{% endblock javascript %}

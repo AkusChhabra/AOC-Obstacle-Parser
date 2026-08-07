@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AOC Obstacle Measurement Tool</title>
-  <link rel="shortcut icon" href="{{ url_for('static', filename='AOC_Obstacle_Tool_Logo.ico')}}" type="image/x-icon">
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-</head>
-
-{% block body %}
+{% block content %}
 <body>
   <div id="app">
     <!-- Top bar -->
@@ -227,15 +218,18 @@
       <button class="icon-btn" onclick="fitView()" title="Fit to screen" style="font-size:11px">⊡</button>
     </div>
   </div>
+
+  <script type="text/javascript">
+    var imgURL = "{{ selected_img }}";
+    console.log("imgURL: ", imgURL)
+    loadImageFile(imgURL);
+  </script>
+  <script src="{{ url_for('static',filename='js/main.js') }} "></script>
+
 </body>
-{% endblock body%}
+{% endblock content %}
 
 {% block javascript %}
-  <script src="{{ url_for('static',filename='js/main.js') }}"></script>
-    <script type="text/javascript">
-      var imgURL = "{{ selected_img }}";
-      console.log("imgURL: ", imgURL)
-      loadImageFile(imgURL);
-    </script>
 {% endblock javascript %}
+
 </html>

@@ -714,6 +714,21 @@ uploadNewChart.addEventListener('click', () => {
 
     // Change template to image_selector.html to allow user to input a new file
 
+    fetch('/reset_session', {
+        method: 'GET',
+    })
+    .then(response => response.text())
+    .then(html => {
+        // Force the browser to overwrite itself with the rendered template
+        document.open();
+        document.write(html);
+        document.close();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+    //window.location.href = "/"
 
 });
 
