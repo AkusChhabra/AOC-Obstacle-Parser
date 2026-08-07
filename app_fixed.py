@@ -102,18 +102,22 @@ def receive_data():
 
     return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
 
-@app.route('/analyze', methods=['POST','GET'])
-def analyze():
-    img = None
+@app.route('/imgURL', methods=['POST','GET'])
+def get_imgURL():
+    imgURL = None
     if request.method == 'POST':
-        img = request.form.get("src")
-        print("selected_img: ", img)
-    print("rendering main.html")
-    return render_template('main.html', selected_img=img) # jsonify(success=True, connections=5) 
+        imgURL = request.form.get("src")
+        print("selected_img: ", imgURL)
+        session['imgURL'] = imgURL
+    print("sending imgURL")
+    return jsonify({"status": "success", "redirect": url_for('tool')})
+    return render_template('main.html', selected_img=imgURL)
 
-@app.route('/test')
-def test():
-    return render_template("main.html")
+@app.route('/tool')
+def tool():
+    print("entered tool")
+    imgURL = session.get("imgURL")
+    return render_template("main.html", selected_img=imgURL)
 #@app.route('/profile')
 #def profile():
 #    img = request.args.get('imgURL')

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block body %}
 <body>
   <div id="app">
     <!-- Top bar -->
@@ -219,17 +219,16 @@
     </div>
   </div>
 
+</body>
+{% endblock body %}
+
+{% block javascript %}
+  <script src="{{ url_for('static',filename='js/main.js') }} "></script>
   <script type="text/javascript">
     var imgURL = "{{ selected_img }}";
     console.log("imgURL: ", imgURL)
     loadImageFile(imgURL);
   </script>
-  <script src="{{ url_for('static',filename='js/main.js') }} "></script>
-
-</body>
-{% endblock content %}
-
-{% block javascript %}
 {% endblock javascript %}
 
 </html>

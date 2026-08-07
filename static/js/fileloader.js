@@ -105,20 +105,26 @@ function sendImgData(imgURL) {
     //console.log("calling /profile")
     //window.location.href = "/profile?imgURL=" + imgURL
     
-    console.log("calling /analyze")
-    fetch('/analyze', {
+    console.log("calling /imgURL")
+    fetch('/imgURL', {
         method: 'POST',
         body: imgURL
     })
-        .then(response => response.text(
-        window.location.href='/analyze' 
-    ))
-    .then(html => {
+    .then(response => response.text())
+    .then(data => {
+        console.log("data: ", data)
+        console.log("data.status: ", data.status)
+            if (data.status == 'success') {
+                console.log("successfully entered")
+                window.location.href = data.redirect;
+            }
+        })    
+    /*.then(html => {
         // Force the browser to overwrite itself with the rendered template
-        /*document.open();
+        document.open();
         document.write(html);
-        document.close();*/
-    })
+        document.close();
+    })*/
     .catch(error => {
         console.error('Error:', error);
     });
