@@ -46,7 +46,9 @@ function loadImageFile(file) {
 
         const fileInput = document.getElementById('file-input');
 
-        const scaleVal = 2; // temporary
+        const scaleVal = Number(document.getElementById("output").textContent);
+
+        console.log("scaleVal: ", scaleVal);
 
         pdfReader.append("file", fileInput.files[0]);
         pdfReader.append("scale", scaleVal);

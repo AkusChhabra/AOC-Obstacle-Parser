@@ -59,25 +59,24 @@ def receive_data():
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
-    file = request.files['file']  # Access the uploaded file
+    file = request.files['file']
     scale = request.form.get('scale', default=1, type=int)
 
-    print("file_obj: ", file)  # Print the filename for debugging
+    print("request.form", request.form)
+    print("scale: ", scale)
+    print("file_obj: ", file)
 
     file.save(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename))
     print(f"File saved to: {os.path.join(app.root_path, 'static', 'uploads', file.filename)}")
     
     print(f"Uploaded data: File={file.filename}, Scale={scale}")
 
-    #file_bytes = file.read()
-
-    #inputFile = pymupdf.open(stream=file_bytes, filetype="pdf")
     print(f"Opening file: {os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename)}")
     inputFile = pymupdf.open(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename), filetype="pdf")
 
     pg_count = 0
     for page in inputFile:
-        zoom = 3.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
+        zoom = scale # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
         matrix = pymupdf.Matrix(zoom, zoom)
         pix = page.get_pixmap(matrix=matrix)
         
