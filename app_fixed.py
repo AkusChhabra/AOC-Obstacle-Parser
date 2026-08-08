@@ -118,10 +118,22 @@ def tool():
 
 @app.route('/reset_session', methods=['POST', 'GET'])
 def reset_session():
-    session.clear()  # Wipes out all stored cookie data for this user
-    return jsonify({"status": "success", "redirect": url_for('home')})
-    #return jsonify({"redirect": url_for('home')})
 
+    # Wipes out all stored cookie data for this user
+    session.clear()
+
+    # Delete all files in upload folder
+    clear_uploads()
+
+    return jsonify({"status": "success", "redirect": url_for('home')})
+
+def clear_uploads():
+    folder_path = os.path.join(app.root_path, UPLOAD_FOLDER)
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+    return
 
 if __name__ == '__main__':
    #webbrowser.open("http://127.0.0.1:5000")
