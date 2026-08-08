@@ -1,5 +1,30 @@
+// Removes any existing files in the static/uploads folder and any images displaying in the gallery div
+function remove_files() {
+
+    fetch('/clear_uploads', {
+        method: 'POST',
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+    })
+    .catch(error => {
+        console.error("Error: ", error)
+    });
+    
+    const container = document.getElementById('gallery');
+    container.innerHTML = '';
+    //const container = document.getElementById("gallery");
+    //const images = container.querySelectorAll('img');
+    //images.forEach(img => img.remove());
+}
+
+
 // ── File loading ──────────────────────────────────────────────
 function loadChart(e) {
+    remove_files();
+
     const file = e.target.files[0];
     if (!file) return;
     loadImageFile(file);
@@ -9,6 +34,8 @@ function loadImageFile(file) {
     const reader = new FileReader();
     const filepath = event.target.files[0];
     console.log("file", filepath);
+
+    document.getElementById("btn-upload").classList.remove("flash-bg");
 
     // Check if the file is a PDF
     if (file.type === 'application/pdf') {
@@ -25,6 +52,8 @@ function loadImageFile(file) {
         pdfReader.append("scale", scaleVal);
 
         console.log("pdfReader (payload): ", pdfReader)
+
+        setHint("Select the image with an AOC and proceed with analysis")
 
         // Send POST request to the Flask server to upload the PDF file and scale value
         fetch('/upload-data', {
@@ -129,3 +158,5 @@ function sendImgData(imgURL) {
         console.error('Error:', error);
     });
 }
+
+function setHint(msg) { document.getElementById('hint-bar').textContent = msg; }

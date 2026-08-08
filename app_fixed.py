@@ -127,13 +127,14 @@ def reset_session():
 
     return jsonify({"status": "success", "redirect": url_for('home')})
 
+@app.route('/clear_uploads', methods=['POST', 'GET'])
 def clear_uploads():
     folder_path = os.path.join(app.root_path, UPLOAD_FOLDER)
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
         if os.path.isfile(file_path):
             os.remove(file_path)
-    return
+    return jsonify({"status": "success"})
 
 if __name__ == '__main__':
    #webbrowser.open("http://127.0.0.1:5000")
