@@ -57,7 +57,32 @@
 
     <!-- Sidebar -->
     <div id="sidebar">
-      <div class="s-section">
+      <div>
+          <button id="settings-tab" class="tabs">
+            <svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+          <button id="obstacle-tab" class="tabs">
+            <svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"
+              stroke-linecap="round">
+              <!-- Ground Line -->
+              <path d="M2 21h20" stroke="#94a3b8" stroke-width="1.5" />
+              <!-- Vertical Obstacles with Different Heights -->
+              <path d="M5 21V14" /> <!-- Short Bar -->
+              <path d="M9 21V10" /> <!-- Medium-Tall Bar -->
+              <path d="M13 21V16" /> <!-- Medium-Short Bar -->
+              <path d="M17 21V6" /> <!-- Tall Bar -->
+              <path d="M21 21V12" /> <!-- Medium Bar -->
+            </svg>
+          </button>
+      </div>
+      
+      {% block tab %}
+      <div id="tkof-div" class="s-section">
         <div class="s-title">Confirm takeoff direction</div>
         <div class="flex-container1">
           <div class="step-text" style="padding-top:6px; padding-bottom:6px">
@@ -80,7 +105,7 @@
       </div>
 
       <!-- Calibration -->
-      <div class="s-section">
+      <div id="calib-div" class="s-section">
         <div class="flex-container1">
           <div class="s-title">Scale calibration</div>
           <div title="Click the start and end of a known distance on the printed scale bar." class="step-num"
@@ -118,7 +143,7 @@
       </div>
 
       <!-- Measurement mode -->
-      <div class="s-section">
+      <div id="measure-div" class="s-section">
         <div class="s-title">Measurement</div>
         <div class="mode-group">
           <button class="btn" id="btn-rwy" onclick="setMode('runway')" disabled>
@@ -147,7 +172,7 @@
       </div>
 
       <!-- Display toggles -->
-      <div class="s-section">
+      <div id="toggles-div" class="s-section">
         <div class="s-title">Display Options</div>
         <div class="toggle-row">
           <span>Dimension lines</span>
@@ -173,37 +198,40 @@
       </div>
 
       <!-- Obstacle Table -->
-      <div class="s-section" style="padding-bottom:6px">
-        <div class="s-title">Obstacle Data</div>
-      </div>
-      <div class="flex-container1">
-        <div class="step-text" style="padding-top:6px; padding-bottom:6px">
-          <label for="Elevation Unit" style="margin-left:10px;">Obstacle Elevation Unit:</label>
-          <select class="step-text" name="elev" id="elev-label" onchange="updateTable()"
-            style="border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
-            <option value="ft">ft</option>
-            <option value="m">m</option>
-          </select>
+      <div id="obst-table-div" style="display: none;">
+        <div class="s-section" style="padding-bottom:6px">
+          <div class="s-title">Obstacle Data</div>
+        </div>
+        <div class="flex-container1">
+          <div class="step-text" style="padding-top:6px; padding-bottom:6px">
+            <label for="Elevation Unit" style="margin-left:10px;">Obstacle Elevation Unit:</label>
+            <select class="step-text" name="elev" id="elev-label" onchange="updateTable()"
+              style="border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
+              <option value="ft">ft</option>
+              <option value="m">m</option>
+            </select>
+          </div>
+        </div>
+        
+          <div id="obs-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>DER (m)</th>
+                  <th>Lat (m)</th>
+                  <th id="elev-table-label">Elev (ft)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="obs-tbody"></tbody>
+            </table>
+            <div id="obs-empty" style="padding:16px;text-align:center;font-size:12px;color:var(--hint)">No obstacles placed
+              yet</div>
+          </div>
         </div>
       </div>
-
-      <div id="obs-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>DER (m)</th>
-              <th>Lat (m)</th>
-              <th id="elev-table-label">Elev (ft)</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="obs-tbody"></tbody>
-        </table>
-        <div id="obs-empty" style="padding:16px;text-align:center;font-size:12px;color:var(--hint)">No obstacles placed
-          yet</div>
-      </div>
-    </div>
+    {% endblock tab %}
 
     <!-- Canvas area -->
     <div id="canvas-area">
@@ -228,5 +256,6 @@
     var imgURL = "{{ selected_img }}";
     console.log("imgURL: ", imgURL)
     loadImageFile(imgURL);
+    sessionStorage.setItem("imgURL", imgURL);
   </script>
 {% endblock javascript %}

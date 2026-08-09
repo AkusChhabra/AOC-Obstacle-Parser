@@ -1,0 +1,46 @@
+{% extends "main.html" %}
+
+{% block tab %}
+<!-- Obstacle Table -->
+<div class="s-section" style="padding-bottom:6px">
+    <div class="s-title">Obstacle Data</div>
+</div>
+<div class="flex-container1">
+    <div class="step-text" style="padding-top:6px; padding-bottom:6px">
+        <label for="Elevation Unit" style="margin-left:10px;">Obstacle Elevation Unit:</label>
+        <select class="step-text" name="elev" id="elev-label" onchange="updateTable()"
+            style="border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
+            <option value="ft">ft</option>
+            <option value="m">m</option>
+        </select>
+    </div>
+</div>
+
+<div id="obs-table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>DER (m)</th>
+                <th>Lat (m)</th>
+                <th id="elev-table-label">Elev (ft)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="obs-tbody"></tbody>
+    </table>
+    <div id="obs-empty" style="padding:16px;text-align:center;font-size:12px;color:var(--hint)">No obstacles placed
+        yet</div>
+</div>
+</div>
+{% endblock tab %}
+
+
+{% block javascript %}
+    <script src="{{ url_for('static',filename='js/main.js') }} "></script>
+    <script type="text/javascript">
+        var imgURL = "{{ selected_img }}";
+        console.log("imgURL: ", imgURL)
+        loadImageFile(imgURL);
+    </script>
+{% endblock javascript %}

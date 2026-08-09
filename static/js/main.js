@@ -748,3 +748,28 @@ window.addEventListener('resize', () => { if (img) fitView(); });
 window.addEventListener('pagehide', function () {
     navigator.sendBeacon('/shutdown');
 });
+
+// Define tab group event listeners
+const divs = ["tkof-div", "calib-div", "measure-div", "toggles-div"];
+
+document.getElementById('obstacle-tab').addEventListener('click', () => {
+    //window.location.href = "/obstacles"
+    divs.forEach(e => {
+        console.log(e);
+        console.log(document.getElementById(e));
+        document.getElementById(e).style.display = "none";
+    });
+
+    document.getElementById("obst-table-div").style.display = "";
+})
+
+document.getElementById('settings-tab').addEventListener('click', () => {
+    //window.location.href="/settings"
+    divs.forEach(e => {
+        console.log(e);
+        console.log(document.getElementById(e));
+        document.getElementById(e).style.display = "";
+    });
+
+    document.getElementById("obst-table-div").style.display = "none";
+})
