@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 
 {% block body %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/image_selector_styles.css')}}">
+
     <div id="app-image-selector">
         <div id="topbar">
-            <h1>Vectis (v2.0.1)</h1>
+            <h1 class="header-display">Vectis (v2.0.1)</h1>
             <div class="sep"></div>
             Set Zoom Level:
             <!-- Live dynamic numeric feedback -->
-            <div class="value-display" id="output">3.0</div>
+            <div class="value-display" id="output" pattern="^\d*(\.\d{0,2})?$">3.00</div>
             <div class="scale-container">
                 <div class="slider-wrapper">
                     <!-- Native HTML range element sets the min, max, and starting index -->
-                    <input type="range" min="1.1" max="5.0" value="3.0" step="0.1" class="scale-slider" id="scale">
+                    <input type="range" min="1.01" max="5.0" value="3.0" step="0.01" class="scale-slider" id="scale">
                     <!-- Structural placeholder for custom JavaScript tick lines -->
                     <div class="scale-ticks" id="ticks-container"></div>
                 </div>
@@ -50,17 +52,17 @@
         // Dynamic tick generator setup
         const min = parseInt(slider.min);
         const max = parseInt(slider.max);
-        const step = 25; // Places a custom tick mark label every 25 units
+        const step = 0.5; // Places a custom tick mark label every 25 units
 
         for (let i = min; i <= max; i += step) {
             const tick = document.createElement('div');
             tick.classList.add('tick');
-            tick.setAttribute('data-value', i);
+            tick.setAttribute('data-value', i.toFixed(1));
             ticksContainer.appendChild(tick);
         }
 
         // Live updating listener event triggers during the active dragging process
         slider.addEventListener('input', (e) => {
-            output.textContent = e.target.value;
+            output.textContent = Number(e.target.value).toFixed(2);
         });</script>
 {% endblock javascript %}

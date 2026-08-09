@@ -1,22 +1,16 @@
- :root {
-     --primary-color: #2563eb;
-     --track-color: #e2e8f0;
-     --tick-color: #94a3b8;
- }
+:root {
+    --primary-color: #d7c8c8;
+    --tick-color: #898686;
+}
 
- body {
-     font-family: system-ui, -apple-system, sans-serif;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     min-height: 100vh;
-     background-color: #f8fafc;
-     margin: 0;
- }
+.header-display {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
 
- .scale-container {
-     background: #ffffff;
-     padding: 2rem;
+.scale-container {
+     background: #f3f1f1;
+     padding: 0.1rem;
      border-radius: 12px;
      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
      width: 100%;
@@ -26,15 +20,15 @@
 
  .value-display {
      text-align: center;
-     font-size: 2.5rem;
+     font-size: 1.25rem;
      font-weight: 700;
      color: #1e293b;
-     margin-bottom: 1.5rem;
+     margin-bottom: 0rem;
  }
 
  .slider-wrapper {
      position: relative;
-     margin-bottom: 2rem;
+     margin-bottom: 0.25rem;
  }
 
  /* Target the actual input element */
@@ -91,7 +85,7 @@
      position: absolute;
      left: 12px;
      right: 12px;
-     top: 24px;
+     top: 0px;
      display: flex;
      justify-content: space-between;
      pointer-events: none;
@@ -99,7 +93,7 @@
 
  .tick {
      width: 2px;
-     height: 10px;
+     height: 5px;
      background-color: var(--tick-color);
      position: relative;
  }
@@ -107,7 +101,7 @@
  .tick::after {
      content: attr(data-value);
      position: absolute;
-     top: 14px;
+     top: 5px;
      left: 50%;
      transform: translateX(-50%);
      font-size: 0.75rem;
