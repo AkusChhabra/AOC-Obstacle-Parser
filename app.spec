@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='AOC Parser',
+    name='Vectis',
     debug=False,
 	icon='.\documents\AOC_Obstacle_Tool_Logo.ico',
     bootloader_ignore_signals=False,
