@@ -659,6 +659,7 @@ function resetVals() {
     document.getElementById('rwy-input').value = ''
     document.getElementById('elev-label').value = 'ft'
     document.getElementById('to-dir').value = 'left'
+    document.getElementById('icao-input').value = ''
     document.getElementById('eff-date-input').value = ''
 
     document.getElementById('icao-input').classList.add('flash-bg');
@@ -668,6 +669,8 @@ function resetVals() {
     document.getElementById('tog-dims').checked = true;
     document.getElementById('tog-labels').checked = true;
     document.getElementById('tog-ids').checked = true;
+
+    document.getElementById('settings-tab').click();
 
     //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
     //document.getElementById('s-count').textContent = '0';
@@ -705,7 +708,7 @@ effDate.addEventListener('input', () => {
 });
 
 uploadNewChart.addEventListener('click', () => {
-    confirm('All progress will be lost. Are you sure you want to continue?');
+    if (!confirm('All progress will be lost. Are you sure you want to continue?')) return;
     resetVals();
     img = null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -750,7 +753,7 @@ window.addEventListener('pagehide', function () {
 });
 
 // Define tab group event listeners
-const divs = ["tkof-div", "calib-div", "measure-div", "toggles-div"];
+const divs = ["tkof-div", "calib-div", "measure-div", "toggles-div", "inputs-div"];
 
 document.getElementById('obstacle-tab').addEventListener('click', () => {
     //window.location.href = "/obstacles"

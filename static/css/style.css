@@ -488,3 +488,21 @@
     .tabs:hover {
         background-color: #005F75;
     }
+
+    .input-fields {
+        margin-left:10px;
+        border:0.5px solid var(--border);
+        border-radius:var(--radius);
+        padding:4px 6px;
+        font-size:12px;
+        background:var(--bg);
+        color:var(--text);
+    }
+
+    .vertical-form {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 0;
+        font-size: 12px;
+    }

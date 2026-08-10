@@ -14,7 +14,7 @@ import os
 import sys
 import json
 import pymupdf
-from flask import Flask, render_template, request, jsonify, session, url_for
+from flask import Flask, render_template, send_from_directory, request, jsonify, send_file
 from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
 
@@ -40,43 +40,48 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+#@app.route('/node_modules/<path:filename>')
+#def serve_node_modules(filename):
+#    return send_from_directory(os.path.join(app.root_path, 'node_modules'), filename)
 
 @app.route("/",  methods = ['GET', 'POST'])
-def home():
-   return render_template('image_selector.html')
+def index():
+    #return render_template('image_selector.html')
+   return render_template('main.html')
 
 
-#@app.route('/shutdown', methods=['POST'])
-#def shutdown():
-#     os._exit(0)
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+     os._exit(0)
 
 
-@app.route('/upload-data', methods=['POST'])
+@app.route('/api/upload-data', methods=['POST'])
 def receive_data():
 
-    print("Received request to upload-data")
+    print("Received request to /api/upload-data")
 
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
-    file = request.files['file']
+    file = request.files['file']  # Access the uploaded file
     scale = request.form.get('scale', default=1, type=int)
 
-    print("request.form", request.form)
-    print("scale: ", scale)
-    print("file_obj: ", file)
+    print("file_obj: ", file)  # Print the filename for debugging
 
     file.save(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename))
     print(f"File saved to: {os.path.join(app.root_path, 'static', 'uploads', file.filename)}")
     
     print(f"Uploaded data: File={file.filename}, Scale={scale}")
 
+    #file_bytes = file.read()
+
+    #inputFile = pymupdf.open(stream=file_bytes, filetype="pdf")
     print(f"Opening file: {os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename)}")
     inputFile = pymupdf.open(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename), filetype="pdf")
 
     pg_count = 0
     for page in inputFile:
-        zoom = scale # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
+        zoom = 3.0 # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
         matrix = pymupdf.Matrix(zoom, zoom)
         pix = page.get_pixmap(matrix=matrix)
         
@@ -94,52 +99,24 @@ def receive_data():
         })
 
     return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
+    
+    # Send a JSON response back to Frontend
+    #return jsonify({ "status": "success", "message": f"Data uploaded for {file}!",}), 200
 
+@app.route('/preview-images')
+def preview_images():
+    try:
+        #print("Received request to /preview-images")
+        return render_template('image_selector.html')
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        return "An error occurred while rendering the template.", 500
 
-@app.route('/imgURL', methods=['POST','GET'])
-def get_imgURL():
-    imgURL = None
-    if request.method == 'POST':
-        imgURL = request.form.get("src")
-        print("selected_img: ", imgURL)
-        session['imgURL'] = imgURL
-    print("sending imgURL")
-    return jsonify({"status": "success", "redirect": url_for('tool')})
-    #return render_template('main.html', selected_img=imgURL)
-
-
-@app.route('/tool')
-def tool():
-    print("entered tool")
-    imgURL = session.get("imgURL")
-    return render_template("main.html", selected_img=imgURL)
-
-
-@app.route('/reset_session', methods=['POST', 'GET'])
-def reset_session():
-    session.clear()  # Wipes out all stored cookie data for this user
-    clear_uploads() # Delete all files in upload folder
-    return jsonify({"status": "success", "redirect": url_for('home')})
-
-@app.route('/clear_uploads', methods=['POST', 'GET'])
-def clear_uploads():
-    folder_path = os.path.join(app.root_path, UPLOAD_FOLDER)
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-    return jsonify({"status": "success"})
-
-@app.route('/obstacles', methods=['POST', 'GET'])
-def obstacles():
-    imgURL = session.get("imgURL")
-    return render_template("obstacles_copy.html")
-    #return jsonify({"status": "success", "redirect": url_for('obstacles')})
-
-@app.route('/settings', methods=['POST', 'GET'])
-def settings():
-    imgURL = session.get("imgURL")
-    return render_template("main.html", selected_img=imgURL)
+## Cache Control
+#@app.after_request
+#def add_header(response):
+#    response.headers['Cache-Control'] = 'no-store'
+#    return response
 
 if __name__ == '__main__':
    #webbrowser.open("http://127.0.0.1:5000")

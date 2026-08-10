@@ -24,15 +24,6 @@
         Download Image
       </button>
       <div class="sep"></div>
-
-      <input type="text" id="icao-input" placeholder="Enter ICAO code"
-        style="margin-left:100px; border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
-
-      <input type="text" id="rwy-input" placeholder="Enter RWY #"
-        style="margin-left:10px; border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
-
-      <input type="date" id="eff-date-input" placeholder="Enter AOC effective date"
-        style="margin-left:10px; border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
       
       <button class="btn danger" onclick="resetAll()" style="margin-left:auto">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -194,6 +185,20 @@
             <div class="toggle-track"></div>
             <div class="toggle-thumb"></div>
           </label>
+        </div>
+      </div>
+
+      <!-- Chart Export Inputs -->
+      <div id="inputs-div" class="s-section">
+        <div class="s-title">Chart Inputs</div>
+        <div class="vertical-form">
+          <span>ICAO</span><input type="text" id="icao-input" placeholder="Enter ICAO code" class="input-fields" style="width: 115px;">
+        </div>
+        <div class="vertical-form">
+          <span>Runway No.</span><input type="text" id="rwy-input" placeholder="Enter RWY #" class="input-fields" style="width: 115px;">
+        </div>
+        <div class="vertical-form">
+          <span>Effective Date</span><input type="date" id="eff-date-input" placeholder="Enter AOC effective date" class="input-fields">
         </div>
       </div>
 
