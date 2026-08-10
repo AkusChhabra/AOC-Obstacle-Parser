@@ -365,9 +365,10 @@ function draw() {
     // Runway end
     if (runwayEnd) {
     const { x, y } = runwayEnd;
-    ctx.strokeStyle = C.blue; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(x - 14, y); ctx.lineTo(x + 14, y); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x, y - 14); ctx.lineTo(x, y + 14); ctx.stroke();
+    ctx.strokeStyle = C.red; ctx.lineWidth = 2;
+    const deltaM = canvas.width*2;    
+    ctx.beginPath(); ctx.moveTo(x - deltaM, y); ctx.lineTo(x + deltaM, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x, y - deltaM); ctx.lineTo(x, y + deltaM); ctx.stroke();
     ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fillStyle = C.blue; ctx.fill();
     drawLabel(x + 12, y - 10, 'RWY end', C.blue);
@@ -671,6 +672,7 @@ function resetVals() {
     document.getElementById('tog-ids').checked = true;
 
     document.getElementById('settings-tab').click();
+    fitView();
 
     //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
     //document.getElementById('s-count').textContent = '0';
