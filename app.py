@@ -45,7 +45,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 def home():
    return render_template('image_selector.html')
 
-
+# shutdown() is a keyword for flask hence removed
 #@app.route('/shutdown', methods=['POST'])
 #def shutdown():
 #     os._exit(0)
