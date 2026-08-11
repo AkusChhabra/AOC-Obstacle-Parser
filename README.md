@@ -2,9 +2,9 @@
 ![Static Badge](https://img.shields.io/badge/Flask-v3.1.3-red)
 ![JavaScript](https://shields.io/badge/JavaScript-ES6-yellow)
 
-# AOC Obstacle Parser
+# Vectis
 
-GUI developed to streamline obstacle data collection from Aerodrome Obstacle Charts. Built using Flask, HTML, and JavaScript, this tool allows users to
+Application developed to streamline obstacle data collection from Aerodrome Obstacle Charts. Built using Flask, HTML, and JavaScript, this tool allows users to
 upload AOC png files, extract relevant obstacle data, and export it in a structured format for further analysis.
 
 ## How to Download & Run the Application
