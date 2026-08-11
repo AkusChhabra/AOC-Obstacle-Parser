@@ -17,6 +17,8 @@ Please download the latest release [here](https://github.com/AkusChhabra/AOC-Obs
 
 Open the AOC Parser.exe file to run the application. The application will open in your default web browser.
 
+Note: v2.0.1 and later now follow the branding of Vectis.
+
 ### 2) Clone the repository and run the application locally
 
 Or use the following command to clone the repository and run the application locally:
