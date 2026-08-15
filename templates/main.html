@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block body %}
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/search_bar.css')}}">
+
 <body>
   <div id="app">
     <!-- Top bar -->
@@ -24,6 +27,15 @@
         Download Image
       </button>
       <div class="sep"></div>
+
+      <search id="searchBar" style="padding-left: 20%;">
+        <form action="/search-results" method="get" class="search-form">
+          <label for="site-search" class="visually-hidden">Search the site:</label>
+          <input type="search" id="site-search" name="q" placeholder="Search ICAO..." aria-label="Search through site content"
+            required>
+          <!--<button type="submit">Search</button>-->
+        </form>
+      </search>
       
       <button class="btn danger" onclick="resetAll()" style="margin-left:auto">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -257,6 +269,7 @@
 
 {% block javascript %}
   <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/search.js') }}"></script>
   <script text="text/javascript">
     var imgURL = "{{ selected_img }}";
     console.log("imgURL: ", imgURL)
