@@ -1,10 +1,13 @@
 let searchBar = document.getElementById('icao-search');
 let selectedRWY = document.getElementById('items');
 
-console.log("searchBar found")
+//console.log("searchBar found")
 
 searchBar.addEventListener('input', (event) => {
-  console.log("detected input change to searchBar")
+  //console.log("detected input change to searchBar")
+
+  searchBar.classList.remove('flash-bg');
+
   const rwy_inp = document.getElementById('rwy-input');
   rwy_inp.value = "";
 
@@ -21,6 +24,7 @@ searchBar.addEventListener('input', (event) => {
 
 selectedRWY.addEventListener('change', (event) => {
   const rwy_inp = document.getElementById('rwy-input');
+
   if (event.target.value != "Select a runway...") {
     rwy_inp.value = event.target.value;
   }
@@ -33,20 +37,24 @@ function search(payload) {
     })
     .then(response => response.json())
     .then(data =>  {
-        console.log("data: ", data)
-        console.log("data.status: ", data.status)
+        //console.log("data: ", data)
+        //console.log("data.status: ", data.status)
         if (data.status == 'success') {
-          console.log("successfully entered")
+          //console.log("successfully entered")
 
           const runway_data = data.runways;
           const myLi = document.getElementById('items');
 
-          for (const rwy of runway_data) {
+          for (let rwy of runway_data) {
             const newOptionItem = document.createElement('option');
-            
+
+            if (rwy.length == 1) {
+              rwy = `0${rwy}`;
+            }
+
             newOptionItem.text = rwy;
             newOptionItem.value = rwy;
-            console.log(newOptionItem);
+            //console.log(newOptionItem);
             myLi.append(newOptionItem);
           }
         }
@@ -57,22 +65,3 @@ function search(payload) {
         console.error('Error:', error);
     });
 }
-
-// Listen for typing events
-/*searchBar.addEventListener('input', (event) => {
-    print("listening to searchBar")
-  // Convert search query to lowercase
-  const query = event.target.value.toLowerCase();
-
-  items.forEach(item => {
-    // Convert item text to lowercase
-    const text = item.textContent.toLowerCase();
-
-    // Toggle visibility based on match
-    if (text.includes(query)) {
-      item.style.display = ''; // Show item
-    } else {
-      item.style.display = 'none'; // Hide item
-    }
-  });
-});*/

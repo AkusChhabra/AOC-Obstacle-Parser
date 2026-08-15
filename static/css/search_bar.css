@@ -1,7 +1,8 @@
 .search-form {
-    display: flex;
+    display: inline-flex;
     max-width: 400px;
     width: 100%;
+    margin: left 0;;
 }
 
 .search-form input[type="search"] {
@@ -37,4 +38,35 @@
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+}
+
+select {
+    appearance: base-select;
+    padding: 10px 15px;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Style the actual dropdown menu popover box */
+select::picker(select) {
+    background-color: #ffffff;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+}
+
+/* Style individual options inside the open menu */
+option {
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+/* Style the hovered or keyboard-navigated option */
+option:hover {
+    background-color: #3b82f6;
+    color: white;
 }
