@@ -1,7 +1,19 @@
+import sys
 import polars as pl
 
-df = pl.read_csv("runways.csv", infer_schema_length=10000)
+def searchRWY(icao, df):
+    sys.stdout.reconfigure(encoding="utf-8")
+    runways = []
 
-icao = df.get_column("airport_ident")
+    result_df = df.filter(pl.col("airport_ident") == icao).select(["airport_ident", "le_ident", "he_ident"])
+    runways_df = result_df.select(pl.col("le_ident"), pl.col("he_ident"))
 
-print(icao)
+
+    runways = runways + runways_df["le_ident"].to_list()
+    runways = runways + runways_df["he_ident"].to_list()
+
+    return runways
+
+#df = pl.read_csv("runways.csv", infer_schema_length=None)
+#icao = "CYYZ"
+#searchRWY(icao, df)

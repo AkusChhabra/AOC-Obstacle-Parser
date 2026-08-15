@@ -28,14 +28,15 @@
       </button>
       <div class="sep"></div>
 
-      <search id="searchBar" style="padding-left: 20%;">
-        <form action="/search-results" method="get" class="search-form">
-          <label for="site-search" class="visually-hidden">Search the site:</label>
-          <input type="search" id="site-search" name="q" placeholder="Search ICAO..." aria-label="Search through site content"
-            required>
-          <!--<button type="submit">Search</button>-->
-        </form>
-      </search>
+      <div class="search-form" style="padding-left:20%;"">
+        <label for="icao-search" hidden>Search ICAO:</label>
+        <input type="search" list="items" type="text" id="icao-search" placeholder="Enter ICAO...">
+        
+        <select id="items">
+            <option value="">Select a runway...</option>
+        </select>
+      </div>
+
       
       <button class="btn danger" onclick="resetAll()" style="margin-left:auto">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

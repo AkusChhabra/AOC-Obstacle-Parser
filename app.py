@@ -17,6 +17,8 @@ import pymupdf
 from flask import Flask, render_template, request, jsonify, session, url_for
 from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
+import polars as pl
+from src.runway_reader import searchRWY
 
 #app = Flask(__name__)
 
@@ -39,6 +41,9 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+
+df = pl.read_csv("./src/runways.csv", infer_schema_length=None)
 
 
 @app.route("/",  methods = ['GET', 'POST'])
@@ -120,6 +125,7 @@ def reset_session():
     clear_uploads() # Delete all files in upload folder
     return jsonify({"status": "success", "redirect": url_for('home')})
 
+
 @app.route('/clear_uploads', methods=['POST', 'GET'])
 def clear_uploads():
     folder_path = os.path.join(app.root_path, UPLOAD_FOLDER)
@@ -128,6 +134,14 @@ def clear_uploads():
         if os.path.isfile(file_path):
             os.remove(file_path)
     return jsonify({"status": "success"})
+
+
+@app.route('/search-icao', methods=['POST'])
+def search_icao():
+    icao = request.form.get('icao').upper()
+    runways = searchRWY(icao, df)
+    return jsonify({"status": "success", "runways": runways, "icao": icao})
+
 
 if __name__ == '__main__':
    #webbrowser.open("http://127.0.0.1:5000")

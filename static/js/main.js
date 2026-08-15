@@ -60,8 +60,9 @@ function directionInit() {
     document.getElementById('to-dir').disabled = false;
     document.getElementById('btn-confirm-dir').disabled = false;
     document.getElementById('btn-confirm-dir').classList.add('flash-bg');
-    document.getElementById('icao-input').classList.add('flash-bg');
-    document.getElementById('rwy-input').classList.add('flash-bg');
+    document.getElementById('icao-search').classList.add('flash-bg');
+    //document.getElementById('icao-input').classList.add('flash-bg');
+    //document.getElementById('rwy-input').classList.add('flash-bg');
     document.getElementById('eff-date-input').classList.add('flash-bg');
 
     setHint('Please set the takeoff direction.')
@@ -645,31 +646,34 @@ function resetVals() {
     document.getElementById('btn-obs').disabled = true;
     document.getElementById('btn-export').disabled = true;
     document.getElementById('downloadBtn').disabled = true;
-    document.getElementById('calib-dist').disabled = false
-    document.getElementById('calib-unit').disabled = false
+    document.getElementById('calib-dist').disabled = false;
+    document.getElementById('calib-unit').disabled = false;
 
     document.getElementById('btn-confirm-dir').classList.add('flash-bg');
     document.getElementById('btn-rwy').classList.remove('flash-bg');
     document.getElementById('btn-obs').classList.remove('flash-bg');
     document.getElementById('btn-calib').classList.remove('flash-bg');
 
-    document.getElementById('btn-calib').disabled = true
+    document.getElementById('btn-calib').disabled = true;
     //document.getElementById('btn-upload').disabled = false
-    document.getElementById('calib-dist').value = '1000'
-    document.getElementById('calib-unit').value = 'm'
-    document.getElementById('rwy-input').value = ''
-    document.getElementById('elev-label').value = 'ft'
-    document.getElementById('to-dir').value = 'left'
-    document.getElementById('icao-input').value = ''
-    document.getElementById('eff-date-input').value = ''
+    document.getElementById('calib-dist').value = '1000';
+    document.getElementById('calib-unit').value = 'm';
+    document.getElementById('rwy-input').value = '';
+    document.getElementById('elev-label').value = 'ft';
+    document.getElementById('to-dir').value = 'left';
+    document.getElementById('icao-input').value = '';
+    document.getElementById('eff-date-input').value = '';
 
-    document.getElementById('icao-input').classList.add('flash-bg');
-    document.getElementById('rwy-input').classList.add('flash-bg');
+    //document.getElementById('icao-input').classList.add('flash-bg');
+    //document.getElementById('rwy-input').classList.add('flash-bg');
     document.getElementById('eff-date-input').classList.add('flash-bg');
 
     document.getElementById('tog-dims').checked = true;
     document.getElementById('tog-labels').checked = true;
     document.getElementById('tog-ids').checked = true;
+
+    document.getElementById('icao-search').value = '';
+    document.getElementById('items').options.length = 1;
 
     document.getElementById('settings-tab').click();
     fitView();
