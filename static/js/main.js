@@ -47,9 +47,8 @@ function readImage(url) {
         canvas.height = img.naturalHeight
         
         // call the following functions once img is pulled from the uploads folder
-        console.log("canvas: ", canvas);
+        //console.log("canvas: ", canvas);
         fitView();
-        //disableUpload();
         directionInit();
     })
 }
@@ -234,7 +233,10 @@ function handleClick(pt) {
     document.getElementById('btn-obs').disabled = false;
     setHint('Runway end set. Switch to "Place obstacle" and click each obstacle.');
     document.getElementById('step1-num').className = 'step-num done';
-    draw(); setMode('obstacle'); return;
+    draw(); 
+    setMode('obstacle'); 
+    document.getElementById('obstacle-tab').click();  
+    return;
     }
 
     if (mode === 'obstacle') {
@@ -449,9 +451,7 @@ function updateTable() {
 
     document.getElementById("elev-table-label").innerText = "Elev (" + document.getElementById("elev-label").value + ")";
     //console.log(document.getElementById("elev-table-label").innerText);
-
-    console.log("obstacles: ", obstacles)
-
+    //console.log("obstacles: ", obstacles)
     //console.log("calibMpp", calibMpp)
     //console.log("runwayEnd", runwayEnd)
 
@@ -466,7 +466,7 @@ function updateTable() {
     <td><button class="icon-btn" title="Delete" onclick="deleteObs('${o.uid}')" style="font-size:12px" aria-label="Delete">×</button></td>`;
     tbody.appendChild(tr);
     });
-    console.log("tbody", tbody)
+    //console.log("tbody", tbody)
     //document.getElementById('s-count').textContent = obstacles.length;
 }
 
@@ -583,7 +583,7 @@ function exportData() {
 
         a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
 
-        console.log('txt: ', txt);
+        //console.log('txt: ', txt);
 
         document.body.appendChild(a);
         a.download = `${icao} RWY${rwy} - WEF ${eff_date}.txt`; a.click();
@@ -632,7 +632,7 @@ function resetVals() {
     calibPts = []; calibMpp = null; runwayEnd = null;
     obstacles = []; obsCount = 0;
 
-    console.log("entered reset Vals");
+    //console.log("entered reset Vals");
 
     document.getElementById('calib-result').style.display = 'none';
     document.getElementById('scale-badge').style.display = 'none';
@@ -677,24 +677,12 @@ function resetVals() {
 
     document.getElementById('settings-tab').click();
     fitView();
-
-    //['s-long','s-lat','s-dist'].forEach(id => document.getElementById(id).textContent = '—');
-    //document.getElementById('s-count').textContent = '0';
-    //enableUpload()
     updateTable();
-    //disableUI();
-    //setMode('runway');
     directionInit();
 }
 
 // ── Hint ──────────────────────────────────────────────────────
 function setHint(msg) { document.getElementById('hint-bar').textContent = msg; }
-
-/*document.getElementById('btn-upload').addEventListener('click', function(event) {
-    console.log('Clicked!');
-});*/
-
-//uploadFile();
 
 const icao = document.getElementById('icao-input');
 const rwy = document.getElementById('rwy-input');
@@ -722,16 +710,16 @@ uploadNewChart.addEventListener('click', () => {
     draw();
 
     // Change template to image_selector.html to allow user to input a new file
-    console.log("calling /reset_session");
+    //("calling /reset_session");
     fetch('/reset_session', {
         method: 'POST'
     })
     .then(response => response.json())
     .then(data =>  {
-        console.log("data: ", data)
-        console.log("data.status: ", data.status)
+        //console.log("data: ", data)
+        //console.log("data.status: ", data.status)
         if (data.status == 'success') {
-            console.log("successfully entered")
+            //console.log("successfully entered")
             window.location.href = data.redirect;
         }
     })
@@ -740,15 +728,11 @@ uploadNewChart.addEventListener('click', () => {
         //document.open();
         //document.write(html);
         //document.close();
-
         //window.location.href = "/"
     //})
     .catch(error => {
         console.error('Error:', error);
     });
-
-    //window.location.href = "/"
-
 });
 
 // Init
@@ -762,10 +746,7 @@ window.addEventListener('pagehide', function () {
 const divs = ["tkof-div", "calib-div", "measure-div", "toggles-div", "inputs-div"];
 
 document.getElementById('obstacle-tab').addEventListener('click', () => {
-    //window.location.href = "/obstacles"
     divs.forEach(e => {
-        console.log(e);
-        console.log(document.getElementById(e));
         document.getElementById(e).style.display = "none";
     });
 
@@ -773,10 +754,7 @@ document.getElementById('obstacle-tab').addEventListener('click', () => {
 })
 
 document.getElementById('settings-tab').addEventListener('click', () => {
-    //window.location.href="/settings"
     divs.forEach(e => {
-        console.log(e);
-        console.log(document.getElementById(e));
         document.getElementById(e).style.display = "";
     });
 

@@ -1,8 +1,8 @@
-import sys
+#import sys
 import polars as pl
 
 def searchRWY(icao, df):
-    sys.stdout.reconfigure(encoding="utf-8")
+    #sys.stdout.reconfigure(encoding="utf-8") Do not uncomment as it breaks packaged app using pyinstaller 
     runways = []
 
     result_df = df.filter(pl.col("airport_ident") == icao).select(["airport_ident", "le_ident", "he_ident"])
@@ -14,6 +14,7 @@ def searchRWY(icao, df):
 
     return runways
 
+## Testing inputs
 #df = pl.read_csv("runways.csv", infer_schema_length=None)
 #icao = "CYYZ"
 #searchRWY(icao, df)

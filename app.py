@@ -12,13 +12,12 @@ flask was used to create a local server that can be accessed through a web brows
 
 import os
 import sys
-import json
 import pymupdf
 from flask import Flask, render_template, request, jsonify, session, url_for
 from flaskwebgui import FlaskUI
 from werkzeug.utils import secure_filename, redirect
 import polars as pl
-from src.runway_reader import searchRWY
+from utils.runway_reader import searchRWY
 
 #app = Flask(__name__)
 
@@ -26,6 +25,10 @@ if hasattr(sys, '_MEIPASS'):
     base_dir = sys._MEIPASS
 else:
     base_dir = os.path.abspath(".")
+
+
+# Call runways.csv data instead of calling it for every search in src/runway_reader.py
+df = pl.read_csv(os.path.join(os.path.join(base_dir, 'static', 'src'), 'runways.csv'), infer_schema_length=None)
 
 app = Flask(
     __name__,
@@ -43,9 +46,6 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 
-df = pl.read_csv("./src/runways.csv", infer_schema_length=None)
-
-
 @app.route("/",  methods = ['GET', 'POST'])
 def home():
    return render_template('image_selector.html')
@@ -59,24 +59,13 @@ def home():
 @app.route('/upload-data', methods=['POST'])
 def receive_data():
 
-    #print("Received request to upload-data")
-
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
     file = request.files['file']
     scale = request.form.get('scale', default=1, type=int)
 
-    #print("request.form", request.form)
-    #print("scale: ", scale)
-    #print("file_obj: ", file)
-
     file.save(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename))
-    #print(f"File saved to: {os.path.join(app.root_path, 'static', 'uploads', file.filename)}")
-    
-    #print(f"Uploaded data: File={file.filename}, Scale={scale}")
-
-    #print(f"Opening file: {os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename)}")
     inputFile = pymupdf.open(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename), filetype="pdf")
 
     pg_count = 0
@@ -94,7 +83,6 @@ def receive_data():
     for i in range(pg_count):
         image_list.append({
             "filename": file.filename,
-            #"data": f"{os.path.join(app.root_path, 'static', 'uploads', file.filename.split('.')[0])}_page-{i}.png"
             "data": f"./static/uploads/{file.filename.split('.')[0]}_page-{i}.png"
         })
 
@@ -106,15 +94,12 @@ def get_imgURL():
     imgURL = None
     if request.method == 'POST':
         imgURL = request.form.get("src")
-        #print("selected_img: ", imgURL)
         session['imgURL'] = imgURL
-    #print("sending imgURL")
     return jsonify({"status": "success", "redirect": url_for('vectis')})
 
 
 @app.route('/vectis')
 def vectis():
-    #print("entered vectis")
     imgURL = session.get("imgURL")
     return render_template("main.html", selected_img=imgURL)
 
@@ -136,7 +121,7 @@ def clear_uploads():
     return jsonify({"status": "success"})
 
 
-@app.route('/search-icao', methods=['POST'])
+@app.route('/search-icao', methods=['POST', 'GET'])
 def search_icao():
     icao = request.form.get('icao').upper()
     runways = searchRWY(icao, df)
@@ -148,9 +133,9 @@ if __name__ == '__main__':
 
     # 1) Development/Debugging
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    #app.run(host='0.0.0.0', port=5000, debug=True)
 
 
     # 2) Production/Desktop GUI
 
-    #FlaskUI(app=app, server="flask").run()
+    FlaskUI(app=app, server="flask").run()
