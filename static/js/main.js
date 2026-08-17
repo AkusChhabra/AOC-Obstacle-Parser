@@ -232,8 +232,9 @@ function handleClick(pt) {
 
     if (mode === 'checkMeasure') {
         checkMeasurePts.push(pt);
-        if (checkMeasurePts.length === 2) finishCheckMeasure();
-        else setHint('Now click the END point.');
+        //if (checkMeasurePts.length === 2) finishCheckMeasure();
+        //else setHint('Now click the END point.');
+        //setHint('Now click the END point.');
         draw(); return;
     }
 
@@ -296,9 +297,9 @@ function finishCalibration() {
     document.getElementById('btn-rwy').classList.add('flash-bg');
 }
 
-function finishCheckMeasure() {
+/*function finishCheckMeasure() {
     calibMpp;
-}
+}*/
 
 function setMode(m) {
     mode = m;
@@ -388,20 +389,21 @@ function draw() {
     // Check Measurement
     if (checkMeasurePts.length > 0 && checkMeasurePts.length <= 2) {
         checkMeasurePts.forEach((p, i) => {
-            drawMarker(p.x, p.y, C.amber, i === 0 ? 'A' : 'B', 6);
+            drawMarker(p.x, p.y, C.greenD, i === 0 ? 'A' : 'B', 6);
         });
         if (checkMeasurePts.length === 2) {
-            drawDashedLine(checkMeasurePts[0].x, checkMeasurePts[0].y, checkMeasurePts[1].x, checkMeasurePts[1].y, C.amber, 1.5);
+            drawSolidLine(checkMeasurePts[0].x, checkMeasurePts[0].y, checkMeasurePts[1].x, checkMeasurePts[1].y, C.greenD, 1.5);
             const mx = (checkMeasurePts[0].x + checkMeasurePts[1].x) / 2;
             const my = (checkMeasurePts[0].y + checkMeasurePts[1].y) / 2 - 8;
             // Update div with measurement value
             distancePx = Math.sqrt((checkMeasurePts[1].x - checkMeasurePts[0].x) ** 2 + (checkMeasurePts[1].y - checkMeasurePts[0].y) ** 2);
-            distMeasured = (distancePx * calibMpp).toFixed(0)
-            drawLabel(mx, my, distMeasured, C.amber);
-            document.getElementById("s-checkMeasure").textContent = distMeasured + ' m';
+            distMeasured = (distancePx * calibMpp).toFixed(2)
+            //drawLabel(mx, my, distMeasured, C.amber);
+            document.getElementById('s-checkMeasure').textContent = distMeasured + ' m';
+            document.getElementById('btn-check-measure').classList.remove('active');
         }
         if (checkMeasurePts.length === 1 && hoverPt && mode === 'checkMeasure') {
-            drawDashedLine(checkMeasurePts[0].x, checkMeasurePts[0].y, hoverPt.x, hoverPt.y, C.amber, 0.8);
+            drawSolidLine(checkMeasurePts[0].x, checkMeasurePts[0].y, hoverPt.x, hoverPt.y, C.greenD, 0.8);
         }
     }
 
@@ -460,6 +462,12 @@ function drawMarker(x, y, color, label, r) {
 function drawDashedLine(x1, y1, x2, y2, color, width) {
     ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width;
     ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+}
+
+function drawSolidLine(x1, y1, x2, y2, color, width) {
+    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     ctx.setLineDash([]); ctx.restore();
 }
 
