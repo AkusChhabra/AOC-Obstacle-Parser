@@ -82,6 +82,13 @@
               <path d="M21 21V12" /> <!-- Medium Bar -->
             </svg>
           </button>
+          <button id="measure-tab" class="tabs" title="Measure">
+            <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://w3.org">
+              <rect x="2" y="7" width="20" height="10" rx="1.5" fill="#f3f4f6" stroke="#1f2937" stroke-width="1.2" />
+              <path d="M5,7 v3 M8,7 v2 M11,7 v4 M14,7 v2 M17,7 v3 M19,7 v2" stroke="#1f2937" stroke-width="1.2"
+                stroke-linecap="round" fill="none" />
+            </svg>
+          </button>
       </div>
       
       {% block tab %}
@@ -127,7 +134,7 @@
             style="border:0.5px solid var(--border);border-radius:var(--radius);padding:4px 6px;font-size:12px;background:var(--bg);color:var(--text);">
             <option value="m">metres</option>
             <option value="ft">feet</option>
-            <option value="nm">NM</option>
+            <!--<option value="nm">NM</option>-->
           </select>
         </div>
         <div style="padding-left:10px;">
@@ -247,6 +254,26 @@
               yet</div>
           </div>
         </div>
+
+        <!-- Measurement -->
+        <div id="check-measure-div" style="display: none;">
+          <div class="s-section" style="padding-bottom:6px">
+            <div class="s-title">Measure Data</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-card">
+              <div class="label">Measured Distance</div>
+              <div class="val" id="s-checkMeasure">—</div>
+            </div>
+            <div style="padding-left:10px; padding-top:10px">
+              <button class="btn active" id="btn-check-measure" onclick="setMode('checkMeasure')">
+                Measure
+              </button>
+            </div>
+          </div>
+        </div>
+
+
       </div>
     {% endblock tab %}
 

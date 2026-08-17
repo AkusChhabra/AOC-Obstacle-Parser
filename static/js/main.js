@@ -1,6 +1,7 @@
 const canvas = document.getElementById('main-canvas');
 const ctx = canvas.getContext('2d');
 const area = document.getElementById('canvas-area');
+document.getElementById("measure-tab").disabled = true;
 
 // State
 let img = null;
@@ -8,6 +9,7 @@ let zoomLevel = 1, panX = 0, panY = 0;
 let isPanning = false, panStart = null;
 let mode = 'calibrate';
 let calibPts = [], calibMpp = null;
+let checkMeasurePts = [];
 let runwayEnd = null;
 let obstacles = [], obsCount = 0;
 let hoverPt = null;
@@ -217,26 +219,33 @@ function handleClick(pt) {
     if (!img) return;
 
     if (pt.x < 0 || pt.y < 0 || pt.x > img.naturalWidth || pt.y > img.naturalHeight) {
-    setHint('Click is outside the chart area');
-    return;
+        setHint('Click is outside the chart area');
+        return;
     }
 
     if (mode === 'calibrate') {
-    calibPts.push(pt);
-    if (calibPts.length === 2) finishCalibration();
-    else setHint('Now click the END of the known distance');
-    draw(); return;
+        calibPts.push(pt);
+        if (calibPts.length === 2) finishCalibration();
+        else setHint('Now click the END of the known distance');
+        draw(); return;
+    }
+
+    if (mode === 'checkMeasure') {
+        checkMeasurePts.push(pt);
+        if (checkMeasurePts.length === 2) finishCheckMeasure();
+        else setHint('Now click the END point.');
+        draw(); return;
     }
 
     if (mode === 'runway') {
-    runwayEnd = pt;
-    document.getElementById('btn-obs').disabled = false;
-    setHint('Runway end set. Switch to "Place obstacle" and click each obstacle.');
-    document.getElementById('step1-num').className = 'step-num done';
-    draw(); 
-    setMode('obstacle'); 
-    document.getElementById('obstacle-tab').click();  
-    return;
+        runwayEnd = pt;
+        document.getElementById('btn-obs').disabled = false;
+        setHint('Runway end set. Switch to "Place obstacle" and click each obstacle.');
+        document.getElementById('step1-num').className = 'step-num done';
+        draw(); 
+        setMode('obstacle'); 
+        document.getElementById('obstacle-tab').click();  
+        return;
     }
 
     if (mode === 'obstacle') {
@@ -266,6 +275,7 @@ function finishCalibration() {
     const px = Math.sqrt(dx * dx + dy * dy);
     calibMpp = distM / px;
 
+
     //const badge = document.getElementById('scale-badge');
     //badge.style.display = 'block';
     //badge.textContent = `Scale: ${calibMpp.toFixed(4)} m/px`;
@@ -276,6 +286,7 @@ function finishCalibration() {
 
     document.getElementById('btn-rwy').disabled = false;
     document.getElementById('btn-calib').disabled = true;
+    document.getElementById("measure-tab").disabled = false;
     document.getElementById('calib-unit').disabled = true;
     document.getElementById('calib-dist').disabled = true;
     setHint('Calibrated. Now click "Set runway end" and click the runway threshold.');
@@ -283,6 +294,10 @@ function finishCalibration() {
     document.getElementById('btn-calib').classList.remove('flash-bg');
     setMode('runway');
     document.getElementById('btn-rwy').classList.add('flash-bg');
+}
+
+function finishCheckMeasure() {
+    calibMpp;
 }
 
 function setMode(m) {
@@ -294,8 +309,13 @@ function setMode(m) {
         calibMpp = null;
         document.getElementById('scale-badge').style.display = 'none';
     }
-    ['btn-calib', 'btn-rwy', 'btn-obs'].forEach(id => document.getElementById(id).classList.remove('active'));
-    const map = { calibrate: 'btn-calib', runway: 'btn-rwy', obstacle: 'btn-obs' };
+    if (m === 'checkMeasure') {
+        document.getElementById('s-checkMeasure').textContent = '—';
+        setHint('Step 1: Click the start point.');
+        checkMeasurePts = [];
+    }
+    ['btn-calib', 'btn-check-measure', 'btn-rwy', 'btn-obs'].forEach(id => document.getElementById(id).classList.remove('active'));
+    const map = { calibrate: 'btn-calib', checkMeasure: 'btn-check-measure', runway: 'btn-rwy', obstacle: 'btn-obs' };
     document.getElementById(map[m]).classList.add('active');
 
     const hints = {
@@ -351,19 +371,41 @@ function draw() {
 
     // Calibration points & line
     if (calibPts.length > 0 && calibPts.length <= 2) {
-    calibPts.forEach((p, i) => {
-        drawMarker(p.x, p.y, C.amber, i === 0 ? 'A' : 'B', 6);
-    });
-    if (calibPts.length === 2) {
-        drawDashedLine(calibPts[0].x, calibPts[0].y, calibPts[1].x, calibPts[1].y, C.amber, 1.5);
-        const mx = (calibPts[0].x + calibPts[1].x) / 2;
-        const my = (calibPts[0].y + calibPts[1].y) / 2 - 8;
-        drawLabel(mx, my, `${document.getElementById('calib-dist').value} ${document.getElementById('calib-unit').value}`, C.amber);
+        calibPts.forEach((p, i) => {
+            drawMarker(p.x, p.y, C.amber, i === 0 ? 'A' : 'B', 6);
+        });
+        if (calibPts.length === 2) {
+            drawDashedLine(calibPts[0].x, calibPts[0].y, calibPts[1].x, calibPts[1].y, C.amber, 1.5);
+            const mx = (calibPts[0].x + calibPts[1].x) / 2;
+            const my = (calibPts[0].y + calibPts[1].y) / 2 - 8;
+            drawLabel(mx, my, `${document.getElementById('calib-dist').value} ${document.getElementById('calib-unit').value}`, C.amber);
+        }
+        if (calibPts.length === 1 && hoverPt && mode === 'calibrate') {
+            drawDashedLine(calibPts[0].x, calibPts[0].y, hoverPt.x, hoverPt.y, C.amber, 0.8);
+        }
     }
-    if (calibPts.length === 1 && hoverPt && mode === 'calibrate') {
-        drawDashedLine(calibPts[0].x, calibPts[0].y, hoverPt.x, hoverPt.y, C.amber, 0.8);
+
+    // Check Measurement
+    if (checkMeasurePts.length > 0 && checkMeasurePts.length <= 2) {
+        checkMeasurePts.forEach((p, i) => {
+            drawMarker(p.x, p.y, C.amber, i === 0 ? 'A' : 'B', 6);
+        });
+        if (checkMeasurePts.length === 2) {
+            drawDashedLine(checkMeasurePts[0].x, checkMeasurePts[0].y, checkMeasurePts[1].x, checkMeasurePts[1].y, C.amber, 1.5);
+            const mx = (checkMeasurePts[0].x + checkMeasurePts[1].x) / 2;
+            const my = (checkMeasurePts[0].y + checkMeasurePts[1].y) / 2 - 8;
+            // Update div with measurement value
+            distancePx = Math.sqrt((checkMeasurePts[1].x - checkMeasurePts[0].x) ** 2 + (checkMeasurePts[1].y - checkMeasurePts[0].y) ** 2);
+            distMeasured = (distancePx * calibMpp).toFixed(0)
+            drawLabel(mx, my, distMeasured, C.amber);
+            document.getElementById("s-checkMeasure").textContent = distMeasured + ' m';
+        }
+        if (checkMeasurePts.length === 1 && hoverPt && mode === 'checkMeasure') {
+            drawDashedLine(checkMeasurePts[0].x, checkMeasurePts[0].y, hoverPt.x, hoverPt.y, C.amber, 0.8);
+        }
     }
-    }
+
+
 
     // Runway end
     if (runwayEnd) {
@@ -675,6 +717,12 @@ function resetVals() {
     document.getElementById('icao-search').value = '';
     document.getElementById('items').options.length = 1;
 
+    // Reset Measure Data tab
+    checkMeasurePts = [];
+    document.getElementById('s-checkMeasure').textContent = '—';
+    document.getElementById("measure-tab").disabled = true;
+
+    // Default to settings tab
     document.getElementById('settings-tab').click();
     fitView();
     updateTable();
@@ -745,18 +793,29 @@ window.addEventListener('pagehide', function () {
 // Define tab group event listeners
 const divs = ["tkof-div", "calib-div", "measure-div", "toggles-div", "inputs-div"];
 
-document.getElementById('obstacle-tab').addEventListener('click', () => {
-    divs.forEach(e => {
-        document.getElementById(e).style.display = "none";
-    });
-
-    document.getElementById("obst-table-div").style.display = "";
-})
-
 document.getElementById('settings-tab').addEventListener('click', () => {
     divs.forEach(e => {
         document.getElementById(e).style.display = "";
     });
 
     document.getElementById("obst-table-div").style.display = "none";
+    document.getElementById("check-measure-div").style.display = "none";
+})
+
+document.getElementById('obstacle-tab').addEventListener('click', () => {
+    divs.forEach(e => {
+        document.getElementById(e).style.display = "none";
+    });
+
+    document.getElementById("obst-table-div").style.display = "";
+    document.getElementById("check-measure-div").style.display = "none";
+})
+
+document.getElementById('measure-tab').addEventListener('click', () => {
+    divs.forEach(e => {
+        document.getElementById(e).style.display = "none";
+    });
+
+    document.getElementById("obst-table-div").style.display = "none";
+    document.getElementById("check-measure-div").style.display = "";
 })
