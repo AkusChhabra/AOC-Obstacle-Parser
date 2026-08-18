@@ -24,3 +24,6 @@ jobs:
 
       - name: Run automated tests
         run: npm test
+
+      - name: Deploy
+        run: echo "Deploying your app..."
