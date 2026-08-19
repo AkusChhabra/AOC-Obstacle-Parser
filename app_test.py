@@ -1,0 +1,138 @@
+"""
+
+Testing for app routes
+
+"""
+
+import os
+import sys
+import pymupdf
+from flask import Flask, render_template, request, jsonify, session, url_for
+from flaskwebgui import FlaskUI
+from werkzeug.utils import secure_filename, redirect
+import polars as pl
+from utils.runway_reader import searchRWY
+
+#app = Flask(__name__)
+
+def create_app():
+    if hasattr(sys, '_MEIPASS'):
+        base_dir = sys._MEIPASS
+    else:
+        base_dir = os.path.abspath(".")
+
+
+    # Call runways.csv data instead of calling it for every search in src/runway_reader.py
+    df = pl.read_csv(os.path.join(os.path.join(base_dir, 'static', 'src'), 'runways.csv'), infer_schema_length=None)
+
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(base_dir, 'templates'),
+        static_folder=os.path.join(base_dir, 'static')
+    )
+
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
+    app.secret_key = "secret key" # not required as user data is not being stored, but added for future use if needed
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+
+
+    @app.route("/",  methods = ['GET', 'POST'])
+    def home():
+       return render_template('image_selector.html')
+
+    # shutdown() is a keyword for flask hence removed
+    #@app.route('/shutdown', methods=['POST'])
+    #def shutdown():
+    #     os._exit(0)
+
+
+    @app.route('/upload-data', methods=['POST'])
+    def receive_data():
+
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+
+        file = request.files['file']
+        scale = request.form.get('scale', default=1, type=int)
+
+        file.save(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename))
+        inputFile = pymupdf.open(os.path.join(os.path.join(app.root_path, 'static', 'uploads'), file.filename), filetype="pdf")
+
+        pg_count = 0
+        for page in inputFile:
+            zoom = scale # Don't go higher otherwise image resolution will slow down measurement tool (perhaps look into svg conversion)
+            matrix = pymupdf.Matrix(zoom, zoom)
+            pix = page.get_pixmap(matrix=matrix)
+
+            pix.save(f"{os.path.join(app.root_path, 'static', 'uploads', file.filename.split('.')[0])}_page-{page.number}.png")
+            pg_count += 1
+
+        inputFile.close()
+
+        image_list = []
+        for i in range(pg_count):
+            image_list.append({
+                "filename": file.filename,
+                "data": f"./static/uploads/{file.filename.split('.')[0]}_page-{i}.png"
+            })
+
+        return jsonify({"status": "success", "message": f"Data uploaded for {file.filename}!", "images": image_list}), 200
+
+
+    @app.route('/imgURL', methods=['POST','GET'])
+    def get_imgURL():
+        imgURL = None
+        if request.method == 'POST':
+            imgURL = request.form.get("src")
+            session['imgURL'] = imgURL
+        return jsonify({"status": "success", "redirect": url_for('vectis')})
+
+
+    @app.route('/vectis')
+    def vectis():
+        imgURL = session.get("imgURL")
+        return render_template("main.html", selected_img=imgURL)
+
+
+    @app.route('/reset_session', methods=['POST', 'GET'])
+    def reset_session():
+        session.clear()  # Wipes out all stored cookie data for this user
+        clear_uploads() # Delete all files in upload folder
+        return jsonify({"status": "success", "redirect": url_for('home')})
+
+
+    @app.route('/clear_uploads', methods=['POST', 'GET'])
+    def clear_uploads():
+        folder_path = os.path.join(app.root_path, UPLOAD_FOLDER)
+        for filename in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        return jsonify({"status": "success"})
+
+
+    @app.route('/search-icao', methods=['POST', 'GET'])
+    def search_icao():
+        icao = request.form.get('icao').upper()
+        runways = searchRWY(icao, df)
+        return jsonify({"status": "success", "runways": runways, "icao": icao})
+
+    return app
+
+
+if __name__ == '__main__':
+   #webbrowser.open("http://127.0.0.1:5000")
+
+    # 1) Development/Debugging
+
+    #app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+    # 2) Production/Desktop GUI
+    app = create_app()
+    app.run()
