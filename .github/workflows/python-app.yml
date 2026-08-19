@@ -23,7 +23,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pymupdf
-          pip install flaskwebgui
           pip install flask
           pip install polars
           pip install werkzeug
